@@ -7,7 +7,7 @@
 - 积压清理是启用清理的一部分：已有历史对象的仓库当轮清到保留数以内，删除前打印完整清单；改名前的遗留名（`app-debug`、`build-log`、`selffont-phase1-*`）按同一前缀规则核对后一并清理。
 - 保留数口径写明：artifact 最近 5 个；有本项目发行对象时 Release / 关联 tag 各最近 1 个；清理失败只报错，不回滚、不删最新对象。
 - 事实修正（第二十版条目里的错误声明）：其余六仓的 `spec-check.yml` 并未删除——本会话令牌只对 `selfs` 有写权限（对其它仓库删文件、建 ref、`git push` 均返回 403）。
-- 现状快照（本轮实测）：Qself artifact 225 个 / 约 129 MB；Gself 27 个 / 约 26 MB；Selffont 80 个 / 约 4.55 GB；fcitx5 54 个 / 约 428 MB；四个仓库均无 Release。清理实现分散在：Qself `arena/01a109fa-qself`（7 个提交、无 PR）、Gself PR #13（`.github/scripts/cleanup_artifacts.py`）、fcitx5 PR #1（`pull_request.yml` 内 `cleanup_artifacts` job）、Selffont PR #6（仅 `build.yml`，无清理）；Selfblox 分支有带清理的 `build.yml` 但 `main` 上没有。
+- 现状快照（本轮实测）：Qself artifact 225 个 / 约 129 MB；Gself 27 个 / 约 26 MB；Selffont 80 个 / 约 4.55 GB；fcitx5 54 个 / 约 428 MB；四个仓库均无 Release。清理实现落点：Qself 只在分支 `arena/01a109fa-qself`（7 个提交、**无 PR**，本会话令牌无写权限开不了）；Gself 在 PR #13（新增 `.github/scripts/cleanup_artifacts.py`）；fcitx5 在 PR #1（新 `build.yml` 内 `cleanup_artifacts` job，同时删 `pull_request.yml` 与 `spec-check.yml`）；Selffont **无处**（PR #6 只有 `build.yml`，不上传 artifact、无清理）；Selfblox 分支 `build.yml` 只有 Luau smoke 自检、无清理，且该仓 0 artifact；qqapk 0 artifact。
 
 ## 第二十版 · 2026-10-05
 
