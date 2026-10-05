@@ -1,0 +1,60 @@
+name: spec-check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  spec-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check specification and CI policy
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          root = Path(".")
+          global_text = (root / "GLOBAL.md").read_text(encoding="utf-8")
+          changelog = (root / "CHANGELOG.md").read_text(encoding="utf-8")
+          agents = root / "AGENTS.md"
+
+          gh = re.search(r"^# Sumicya 全项目规范（第(\d+)版 · ([0-9-]+)）$", global_text, re.M)
+          ch = re.search(r"^## 第(\d+)版 · ([0-9-]+)$", changelog, re.M)
+          if not gh or not ch or gh.group(1) != ch.group(1) or gh.group(2) != ch.group(2):
+              raise SystemExit("GLOBAL.md 与 CHANGELOG.md 的最新版本/日期不一致")
+
+          if not agents.exists():
+              raise SystemExit("缺少 AGENTS.md")
+          agents_text = agents.read_text(encoding="utf-8")
+          if "GLOBAL.md" not in agents_text or not re.search(r"本仓库上次同步 = 第\d+版", agents_text):
+              raise SystemExit("AGENTS.md 缺少 GLOBAL.md 指针或版本戳")
+
+          required = [
+              "本地不得留下未提交更改",
+              "不得自动创建 Release",
+              "不得自动创建正式发行 tag",
+              "Release 保留最近 1 个",
+              "Actions artifact 保留最近 5 个",
+          ]
+          for item in required:
+              if item not in global_text:
+                  raise SystemExit(f"GLOBAL.md 缺少强制规则：{item}")
+
+          workflows = root / ".github" / "workflows"
+          forbidden = re.compile(r"(?i)(softprops/action-gh-release|gh release create|createRelease|create_git_release|actions/create-release)")
+          if workflows.exists():
+              for path in workflows.glob("*.yml"):
+                  text = path.read_text(encoding="utf-8")
+                  if path.name != "spec-check.yml" and forbidden.search(text):
+                      raise SystemExit(f"{path} 包含自动创建 Release 的实现；规范禁止 CI 自动发版")
+                  if path.name == "spec-check.yml" and re.search(r"(?m)^\s*(contents|actions):\s*write\s*$", text):
+                      raise SystemExit("spec-check.yml 不得拥有写权限")
+
+          print(f"规范检查通过：第 {gh.group(1)} 版 · {gh.group(2)}")
