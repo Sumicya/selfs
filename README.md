@@ -1,25 +1,19 @@
-# Sumicya 规范与集合
+# Sumicya 规范
 
-Sumicya 全项目的全局规则放在这里：`GLOBAL.md` 是**唯一权威**，`CHANGELOG.md` 记每一版改了什么。各项目仓库的 `AGENTS.md` 只写该项目的条目，再加一行指向本仓库的指针和「上次同步 = 第 N 版」的版本戳。
+以**辩证法、简单性、先进性、自由性**指导项目工作。默认分支的 [GLOBAL.md](GLOBAL.md) 是唯一对外规范入口，[CHANGELOG.md](CHANGELOG.md) 记录历史变更。
 
-## 怎么用
+## 使用
 
-- 开新会话 / 换窗口 / 换项目时，贴给会话的只要一行：
+开始任务先读项目 `AGENTS.md` 和最新规范，再核对相关实现。有实际冲突就提问，已明确要求直接执行；事实、推断和未验证事项分开说明。
 
-  `读 Sumicya/selfs 的 GLOBAL.md（最新版）和本仓库 AGENTS.md，按规范干活；本轮任务：……`
+```text
+读 Sumicya/selfs 默认分支的 GLOBAL.md 和当前项目 AGENTS.md；本轮任务：……
+```
 
-- 会话每轮开头会回一行「已读 AGENTS.md（项目规则）+ 规范第 N 版；本轮项目核对清单是……」——没看到这行就是它没读。
+项目 `AGENTS.md` 只保留项目事实、必要限制、规范指针及「上次同步 = 第 N 版」。核对并处理本项目受影响的条目后更新版本戳，不能只改数字冒充完成。无法读取远端时注明已读版本，不假称最新。
 
-- 会话自己核对版本落后没落后：
+## 修改
 
-  `gh api repos/Sumicya/selfs/contents/GLOBAL.md --jq .sha`（记下 sha），`gh api repos/Sumicya/selfs/contents/GLOBAL.md --jq .content | base64 -d | head -1`（看标题里的第几版）。
+修改规范时清除相反表述，更新版本号、变更记录和本仓 `AGENTS.md`，核对相关文档一致性。尚未合入默认分支的内容是待审版本，不代表全局生效；提交、推送和合并按明确授权执行。
 
-- 查某个仓库的 `AGENTS.md` 和默认分支：
-
-  `gh api repos/Sumicya/<仓库>/contents/AGENTS.md --jq .size`、`gh api repos/Sumicya/<仓库> --jq .default_branch`
-
-## 怎么改
-
-- 改规则：改 `GLOBAL.md`，在 `CHANGELOG.md` 顶部加一条（版本、日期、改了什么），标题里的版本号一起 +1。
-- 改完让下一个会话在项目 `AGENTS.md` 里把版本戳更新掉；版本戳落后会让会话按旧规则干活，这是要防的事。
-- 不在这里放会腐烂的东西：不列「各仓库现状表」，不复制各项目的核对清单（那些在各仓库自己的 `AGENTS.md` 里），不写死 run 号、最大值这类现值，只写查法。
+历史记录不作为现行规则例外。本仓不维护各项目的实时状态表，也不设置规范检查 CI；核对由 agent 在会话中完成。
