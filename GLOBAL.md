@@ -42,6 +42,7 @@
 - [newliver666/apk-reverse](https://github.com/newliver666/apk-reverse/tree/main/skills/apk-reverse)：APK 逆向分析 Skill 及配套资料，按任务查阅分析方法，不因引用就视为已安装。
 - [2akouwu/reverify](https://github.com/2akouwu/reverify)：分析结论校验工具的文档，按需核对 MCP / CLI 的实际接口与验证方法。
 - [NationalSecurityAgency/ghidra](https://github.com/NationalSecurityAgency/ghidra)：逆向工程框架的文档，按需查阅入门、分析方法与安全说明。
+- [morluto/rea](https://github.com/morluto/rea)：REA（Reverse Engineer Anything）CLI 与 MCP，支持 native、JS/Electron、Android、.NET 等目标的本地分析，按需查阅接口与限制，不因引用就视为已安装。
 
 ## 已确定的交付要求
 
