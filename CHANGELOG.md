@@ -1,5 +1,13 @@
 # 变更记录
 
+## 2026-10-13 · 清理不逐条请示，跨仓 403 当轮报阻塞
+
+全仓扫描结果：Qself、Gself、Selfblox、qqapk 的默认分支上各有一份 `.github/workflows/spec-check.yml`，四份是同一个 blob（`f16f9beb`，1588 B），用 `ubuntu-latest` + `actions/checkout@v4`，检查的是各仓 AGENTS.md；四仓工作流列表均 0 条、运行 0 次，属死文件，同时违反「CI 只服务构建与清理」和「禁 `ubuntu-latest`」。Selffont 只有 build.yml，selfs 无 `.github`，两仓干净。五条在飞分支（Qself 两条、Gself、Selffont、Selfblox 各一条）都不含该文件，删除不会被后续合并带回来。
+
+清理没执行成，原因是实测的权限边界：四仓的 contents DELETE 与 `git push` 全部 403（`Permission to Sumicya/<repo>.git denied to Sumicya`），本会话令牌只对 selfs 可写；仓库 API 报的 `permissions.push=true` 是安装名义权限，与实际能否推送无关。
+
+规范改动：默认授权里把「被禁的冗余工作流文件」列为清理对象，写明清理已获授权就一次做完、不逐条再问；「禁止会话直接推默认分支」限定为交付内容，清理类删除不在此限；保留节写明无产物仓默认分支上遗留的工作流文件一并删掉；新增一段——沙箱令牌通常只对当前仓有写权限，跨仓清理 403 就当轮报阻塞并把清单与命令交给该仓会话，不拿「等授权」当理由停手，权限以实际推送结果为准。
+
 ## 2026-10-13 · 纯存储仓不适用项目条目要求
 
 qqapk 是纯存储仓：375 MB，内容是 `qq.aa`~`qq.ae`（拼成 QQ 真包）、`FunBox_v2380.apk`、`繁华模块_2.5.9.apk`，无源码无构建。主人 2026-10-10 的提交 `3fbd9546`「qqapk 存 dex，不需要规范」已删掉该仓 AGENTS.md。上一轮汇报仍把「qqapk 无 AGENTS.md」列成缺口并提议补一份，属只看当前快照、不看提交历史就下结论。
