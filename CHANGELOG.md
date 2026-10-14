@@ -1,5 +1,13 @@
 # 变更记录
 
+## 2026-10-14 · 删掉「谁来做」这件交接内容，清理责任固定到 CI job 与会话
+
+Qself 会话在它的 CHANGELOG 里写：三笔混口径产物「本会话令牌删除返回 403（响应头 `X-Accepted-Github-Permissions: actions=write`），改由仓库拥有者在本机执行同一条命令删除成功」。它填的「谁来做：持 actions: write 的令牌或仓库拥有者」正是照本仓上一版条文填的——交接四件里第二件就是「谁来做」。我在条文里放了一个责任协商字段，各会话把它填成「仓库拥有者」，默认授权的清理就成了主人的活。同一机制此前以「报主人」出现过一次（见本文件孤立 tag 条目），换个外形又活了。
+
+实测纠正另一处错误条文：本仓 `actions` 写三类端点 `DELETE /repos/Sumicya/selfs/actions/artifacts/1`、`POST /repos/Sumicya/selfs/actions/runs/1/rerun`、`PUT /repos/Sumicya/selfs/actions/permissions/workflow` 全部返回 403 `Resource not accessible by integration`，同时 `contents` 读正常（GLOBAL.md 11848B）、`contents` 与 `refs` 写正常（每轮提交推送成功）。所以旧条文「沙箱令牌通常只对当前仓库有写权限」是错的：能力按权限类分，不按仓库分，`actions` 类写在本仓也没有，Qself 删自己仓 artifact 返回 403 与此一致。
+
+规范改为：令牌能力按权限类实测记录，名义 `permissions.admin/push=true` 不作依据；谁来做固定不许协商——超量 artifact 与运行记录由 CI 清理 job 删（runner 的 `GITHUB_TOKEN` 带 `actions: write`，与沙箱令牌不同源），孤立 tag、已合入分支、被禁工作流文件由会话令牌删，创建 Release/tag/asset 与合并关闭 PR 只由主人发起；交接四件改三件，删掉「谁来做」；明文禁止「谁来做：持某权限的令牌或仓库拥有者」「改由仓库拥有者执行」「需拥有者手动清理」这类句式出现在报告、CHANGELOG、AGENTS.md、工作流注释里；权限缺口按缺口报（端点、返回码、缺哪类权限、可粘贴命令），责任仍归 CI 清理 job 与该仓会话。清理 job 判据由数量一条改为数量加命名口径两条（段数等于工作流顶部 `SEGMENTS` 声明值），混口径产物由 job 自己删，不落到主人手上；有产物仓缺清理作业即违规。汇报口径节同步补上禁令，结尾句式规定不变。
+
 ## 2026-10-14 · 拆出包与 PR 校验两个工作流，堵住 run_number 被 PR 运行吃号
 
 Qself 会话按上一版口径改了 build.yml：PR 运行的取号、出包、上传步骤全加 `if: github.event_name != 'pull_request'`，实证 rn=275（pull_request）各步 skipped、无产物。号却照旧被吃。实测数据：rn=271 pull_request、rn=272 push、rn=273 pull_request、rn=274 push、rn=275 pull_request，五个号里两个是 PR 运行吃掉的；rn=273 还留下产物 `Qself-26.10.14.6.273`（它触发时用的是上一版 build.yml）。artifact 的当日序号序列成了 7 → 6 → 6 → 3，旧口径与新口径并存，版本号不可读。
