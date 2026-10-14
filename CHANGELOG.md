@@ -1,5 +1,13 @@
 # 变更记录
 
+## 2026-10-14 · 拆出包与 PR 校验两个工作流，堵住 run_number 被 PR 运行吃号
+
+Qself 会话按上一版口径改了 build.yml：PR 运行的取号、出包、上传步骤全加 `if: github.event_name != 'pull_request'`，实证 rn=275（pull_request）各步 skipped、无产物。号却照旧被吃。实测数据：rn=271 pull_request、rn=272 push、rn=273 pull_request、rn=274 push、rn=275 pull_request，五个号里两个是 PR 运行吃掉的；rn=273 还留下产物 `Qself-26.10.14.6.273`（它触发时用的是上一版 build.yml）。artifact 的当日序号序列成了 7 → 6 → 6 → 3，旧口径与新口径并存，版本号不可读。
+
+根因是上一版条文只堵了上传、没堵取号：`run_number` 按工作流递增，运行创建时就分配，步骤级 `if` 拦不住。只要一个工作流同时接 `push` 与 `pull_request`，每个提交就吃两个号，改 CI 的每次推送同样吃两个号——修漏洞的过程本身在刷号。
+
+规范改为：版本号只能取出包工作流的 `run_number`；出包与 PR 校验必须拆成两个工作流文件，出包只接 `push`（限定默认分支）与 `workflow_dispatch`，PR 校验只接 `pull_request`，禁止一个工作流同时接两种事件；PR 校验工作流的 run_number 是独立序列，永不参与版本号；有产物仓工作流固定两个，同仓出现两个都能出包的工作流即违规（Gself 的 android.yml 与 build.yml 并存已造成总序号 1 与 144、145 分叉）；调试 CI 的推送不许吃号，会话分支要包用 `workflow_dispatch`；同仓 artifact 不得并存两种取数口径，发现即当轮清掉旧口径产物或在 AGENTS.md 写明分界点。简单性节的「一份职责只留一个工作流」相应改为「固定两个：出包与 PR 校验，第三个即冗余」，清除相反表述。
+
 ## 2026-10-14 · 堵版本号刷号漏洞：PR 运行不取号，当日序号改数出包运行
 
 主人要求查哪个分支在刷版本号。实测结论：Qself 的 `arena/e207d38d-qself`（PR #11）刷得最凶。它的 `build.yml` 触发是 `on: push` + `pull_request` + `workflow_dispatch` 且不限分支，分支上有开放 PR，于是每个提交触发两次运行、吃掉两个总序号、出两个 artifact：sha `9afda492` → run 268(push) + 269(PR)，sha `e902407b` → run 270(push) + 271(PR)，35 分钟内 run_number 267→271。号段消耗速度：约两小时前该仓最旧 artifact 还是 `Qself-26.10.13.9.220`，现在全部是 267–271，一夜吃掉约 51 个号。分支上还有明写目的的空提交 `4320ac7c`「ci: 空提交——验证删掉 248 条运行记录后 run_number 是否继续递增」，以及为触发清理而推送的 `8f51326e`。
