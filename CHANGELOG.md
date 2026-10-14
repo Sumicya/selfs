@@ -17,6 +17,10 @@
 11. **`GLOBAL.md` 第 3 行与权威顺序同源**（并入第 1 条处理）。
 12. **`AGENTS.md`、`README.md` 与新条文不一致**（并入第 1 条处理）。
 
+本轮改完复查下游实况（取值 2026-10-14T12:52:33Z）：三仓的 PR 校验工作流都已把清理 job 改成 `actions: write` 加 `CLEANUP_APPLY: 'true'`，并发组分别为 `qself-cleanup-artifacts`、`gself-cleanup`、`selffont-artifacts`（与各自出包工作流共用）；artifact 数 Qself 1（`Qself-26.10.14.3.274`）、Gself 1（`Gself-26.10.14.2.148`）、Selffont 3（`Selffont-26.10.14.4.119`、`Selffont-26.10.13.6.115`、`Selffont-26.10.13.5.114`），Gself 与 Selffont 较 07:11Z 的 3 个、6 个已实际减少，真删生效。三仓工作流注册表 `total_count` 均为 2。Gself PR 校验 run 9 的 cleanup job failure、run 10 与 11 success，按第 2 条新口径不升级为阻塞项，已作为实证写进条文。
+
+下游 AGENTS.md 仍有两处与现行规范冲突，由各仓会话当轮自改：Gself `AGENTS.md:3` 写「以 Sumicya/selfs/GLOBAL.md 第十五版为准」、Selffont `AGENTS.md:3` 写「第二十一版，2026-10-05」，版本戳违反「AGENTS.md 不写版本号或同步戳」，且未附 selfs 提交 sha；Selffont `AGENTS.md:13` 写「清理 job 必须在默认分支的构建工作流里」，与「真删必须挂会话可达的 PR 校验工作流」相反。Qself `AGENTS.md` 无版本戳。
+
 本轮同时补的教训条文：规范改动落地后必须核对默认分支与最新提交的差异并把差异报成事实；写任何指引前核对执行者有没有权限做这件事；每加一条失败处理口径，必须回到同节把旧口径删掉或限定。
 
 ## 2026-10-14 · 真删挂到 PR 校验工作流，清理不再永远跑不到
