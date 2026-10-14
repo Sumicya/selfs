@@ -52,6 +52,7 @@ CI 只服务构建与清理，不设规范检查等冗余流程。有产物仓�
 - workflow 重建造成号段跳变时，当轮把重建前最大号写入该仓 AGENTS.md 作基线，此后全部相减，不与原值混用；未记录基线就用原值，不判失败。
 - 当日序号 = 当日（UTC+8）该仓出包运行的序号，从 1 起按 `run_started_at` 升序取本次位次，PR 校验运行不计入。计数基准是当日运行列表，所以数量清理不得删当日的 run 与 artifact（见「保留」）。禁止按「head 提交在当日提交序列中的位次」取数：并发运行会竞态，实测 Qself 出现当日序号 5 重复两次、4 排在 6 之后。取不到就退化四段 `yy.m.d.总序号`，并在该仓 AGENTS.md 写明原因。
 - 同一仓的 artifact 里不得并存两种取数口径。实测 Qself 当日序号序列是 7 → 6 → 6 → 3（旧口径与新口径混在一批产物里），发现即当轮清掉旧口径产物或在 AGENTS.md 说明分界点。
+- 分界点记录只能引可核对象：run 号、事件、head sha、日期，加上删除前那次 API 输出的产物名单原文与取值时间。已删 artifact 的名字不许凭记忆写，因为 artifact 删了就查不到，run 记录还在，写之前用 run 记录逐条核。实证 Qself `AGENTS.md:96` 写「当日序号 6 曾重复（rn=273、rn=275 都是 pull_request 运行仍出包），产物 `Qself-26.10.14.6.273` 与 `.6.275` 已删」，三处错：重复序号 6 的是 rn=272（push）与 rn=273（pull_request），rn=275 是 pull_request 但未出包，`.6.275` 这个产物从未存在。核命令 `gh api "repos/<owner>/<repo>/actions/runs?per_page=100" --jq '.workflow_runs[]|"rn=\(.run_number) \(.event) \(.head_sha[0:8])"'`。
 - 调试 CI 的推送不许吃号：出包工作流不接会话分支的 `push`，会话分支要包用 `workflow_dispatch`。禁止空提交刷号，禁止为触发 CI 而推送提交。
 - 重试 `run_attempt > 1` 复用首次 attempt 已定的号，不重新加号。
 - 禁止用历史成功数、现存 artifact 最大号等旧锚取数。
@@ -61,7 +62,7 @@ CI 只服务构建与清理，不设规范检查等冗余流程。有产物仓�
 
 - Release：1 个。artifact：当日之外每条序列 5 个，`retention-days: 5` 只作时间兜底，不以过期代替滚动清理。当日产生的 artifact 与运行记录当天不删，次日纳入滚动清理，当日条数不设上限——当日序号取自当日运行列表，删当日运行会抽走计数基准，实测 Gself 因此出现两个相同当日序号（`Gself-26.10.14.2.147` sha 400bba32 与 `Gself-26.10.14.2.148` sha 8c36a0c3）。上限会逼着删当日运行，重新制造重复序号，所以当日豁免。命名口径不符、来源是 PR 运行、当日序号重复的产物不在此豁免内，当轮即删。
 - tag：与 Release 同口径，保留 1 个，且只随获准的 Release 存在。无对应 Release 的孤立 tag 属超量对象，按默认授权当轮删除，删前打印清单、tag 指向的提交与「会丢什么」；删的是引用，指向的提交仍在历史里。
-- 分支：已合入的会话分支保留 0 个。删除的唯一判据是工作已继承进默认分支，删前用 compare 核对 `ahead_by=0`。PR 关闭而未合入的分支一律保留并报主人，不为凑数删；仍挂开放 PR 的分支不删。删前打印清单并说明会丢什么。
+- 分支：已合入的会话分支保留 0 个。删除的唯一判据是工作已继承进默认分支，删前用 compare 核对 `ahead_by=0`。扫描候选时必须排除默认分支：默认分支与自己比 `ahead_by` 恒为 0，不排除就会把它判成可删对象（实证 Qself 报告写「分支 5 支 ahead_by 28/13/10/2/0」，那个 0 是 `main` 自己）。PR 关闭而未合入的分支一律保留并报主人，不为凑数删；仍挂开放 PR 的分支不删。删前打印清单并说明会丢什么。
 - 运行记录：有产物仓当日之外每条序列 5 条，序列按工作流计（`run_number` 按工作流递增），出包与 PR 校验各一条；无产物/无 CI 仓（selfs、qqapk、Selfblox 等）清零，禁止新增工作流，默认分支上遗留的工作流文件一并删掉。
 - 清理 job 权限最小 `actions: write`，只删本项目 artifact 与 run，不碰最新对象，失败只报错不回滚。判据四条：数量（当日之外每条序列 artifact 5 个、run 5 条）、命名口径（段数等于工作流顶部 `SEGMENTS` 声明值）、产物来源（产物的 `workflow_run` 事件是 `pull_request` 的一律删，PR 运行不出包，拆分前留下的也算，实测 Gself `Gself-26.10.14.4.145` 由 `pull_request` 运行 rn=145 产出）、重复当日序号（同一天同一序列出现两个相同当日序号，保留总序号最大的一个，其余删，并在该仓 AGENTS.md 记一行分界点；产物名改不了，只能删旧的，实证 Gself `.2.147` 与 `.2.148` 并存）。数量判据当日豁免，其余三条不豁免。命名不符、来源是 PR 运行、当日序号重复的产物都属超量对象，由清理 job 删，不靠会话令牌（`actions` 写实测 403），更不靠主人手动。
 - 排序一律按 `run_started_at`（UTC+8 日界），`id` 只作同刻 tiebreak；按 `id` 降序在跨工作流混排时不等于按时间降序。删 run 会连带删它的 artifact，所以承载保留产物的 run 不删、也不计入 run 上限，上限按「不承载保留产物的 run」计（实证 Qself 干跑里 build 序列剩 6 条）。正在运行的本次 run 不删。PR 校验工作流不挂真删作业，它的超量 run 由出包工作流的清理 job 一并删（`actions: write` 可删同仓任意工作流的 run），真删只留一处。
@@ -73,7 +74,7 @@ CI 只服务构建与清理，不设规范检查等冗余流程。有产物仓�
 
 有产物仓最多两个工作流：出包工作流与 PR 校验工作流，各一条 `run_number` 序列。PR 校验工作流可以不设，出包工作流不得接 `pull_request`。同仓出现两个都能出包的工作流即违规（实测 Gself 的 `android.yml` 与 `build.yml` 并存，总序号因此分叉）。拆分必须一次做完：删掉出包工作流的 `pull_request` 触发与新建 PR 校验工作流放同一提交，否则 PR 运行继续出包吃号，实证 Gself rn=145 是 `pull_request` 运行却出了产物 `Gself-26.10.14.4.145`。
 
-出包工作流必须构建并 `actions/upload-artifact`（`name: <项目名>-<版本>`、`retention-days: 5`、`if-no-files-found: error`），产物只留 runner 上按违规处理；触发只写 `push`（`branches: [默认分支]`）与 `workflow_dispatch`。PR 校验工作流只跑校验与清理预演（`actions: read`、`CLEANUP_APPLY: 'false'`，只打印将删名单与判据理由，不删），不取号、不上传 artifact、不真删，触发只写 `pull_request`。出包工作流顶部声明 `env: SEGMENTS: 5`（退化四段期改 4，并在该仓 AGENTS.md 写明原因）与 `env: CLEANUP_APPLY: 'true'`，清理作业按四条判据真删，权限最小 `actions: write`；有产物仓缺清理作业即违规。工作流头部注释里的保留数写法必须与「保留」节一致（当日之外每条序列 artifact 5、run 5），不许留旧写法。CI 出包不等于发版。无产物仓不出包、不发版、不设工作流。
+出包工作流必须构建并 `actions/upload-artifact`（`name: <项目名>-<版本>`、`retention-days: 5`、`if-no-files-found: error`），产物只留 runner 上按违规处理；触发只写 `push`（`branches: [默认分支]`）与 `workflow_dispatch`。PR 校验工作流只跑校验与清理预演（`actions: read`、`CLEANUP_APPLY: 'false'`，只打印将删名单与判据理由，不删），不取号、不上传 artifact、不真删，触发只写 `pull_request`。预演靠 `pull_request` 触发，取预演证据就要有开放 PR：已有开放 PR 的仓直接用它；本无开放 PR 的仓可以开一个（开 PR 是会话侧交付的正常载体，不属发布），但禁止为触发 CI 造空提交或无内容推送，开了也不得提议、催促合并（实证 Selffont 为取预演证据开 PR #7，PR 描述里写明不提议合并）。出包工作流顶部声明 `env: SEGMENTS: 5`（退化四段期改 4，并在该仓 AGENTS.md 写明原因）与 `env: CLEANUP_APPLY: 'true'`，清理作业按四条判据真删，权限最小 `actions: write`；有产物仓缺清理作业即违规。工作流头部注释里的保留数写法必须与「保留」节一致（当日之外每条序列 artifact 5、run 5），不许留旧写法。CI 出包不等于发版。无产物仓不出包、不发版、不设工作流。
 
 ## 文档参考
 
@@ -107,7 +108,7 @@ CI 只服务构建与清理，不设规范检查等冗余流程。有产物仓�
 
 分开写「CI 出包：有或无（artifact 名、入口）」与「CI 发版：未授权或已授权」，无产物仓写明「本仓库无可下载产物」。
 
-报完成必须给可点链接，只写「已完成」或只给 sha 与编号按未完成处理。链接取接口返回的 `html_url`，不手写拼接：PR 用 `gh pr view <n> --json url --jq .url`；提交用 `gh api repos/<owner>/<repo>/commits/<sha> --jq .html_url`；文件用 `gh api "repos/<owner>/<repo>/contents/<路径>?ref=<分支>" --jq .html_url`；分支与目录用 `https://github.com/<owner>/<repo>/tree/<分支>`；运行用 `gh api repos/<owner>/<repo>/actions/runs/<id> --jq .html_url`。阻塞与清理同样给链接：删了什么给对应提交链接，删不了给目标文件链接。
+汇报里的计数必须与同一条回复里贴出的名单行数一致，并标取值时间；两者对不上按数字未复核处理（实证 Qself 报告正文写「run 12 条」，同一条回复贴出的预演名单是 13 行，差在推送前后取了两次值却没标时间）。报完成必须给可点链接，只写「已完成」或只给 sha 与编号按未完成处理。链接取接口返回的 `html_url`，不手写拼接：PR 用 `gh pr view <n> --json url --jq .url`；提交用 `gh api repos/<owner>/<repo>/commits/<sha> --jq .html_url`；文件用 `gh api "repos/<owner>/<repo>/contents/<路径>?ref=<分支>" --jq .html_url`；分支与目录用 `https://github.com/<owner>/<repo>/tree/<分支>`；运行用 `gh api repos/<owner>/<repo>/actions/runs/<id> --jq .html_url`。阻塞与清理同样给链接：删了什么给对应提交链接，删不了给目标文件链接。
 
 结尾只允许两种句式：「已执行，结果如下」与「阻塞在此，命令如下」。禁止「要不要我做」「等你一句话」这类把已授权事项重新挂起的问句，也禁止「谁来做：持某权限的令牌或仓库拥有者」「改由拥有者执行」这类把清理责任写成主人的活；阻塞只报端点、真实返回码、缺哪一类权限与可粘贴命令。
 
