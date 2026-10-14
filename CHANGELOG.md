@@ -1,5 +1,13 @@
 # 变更记录
 
+## 2026-10-13 · 孤立 tag 归入默认授权清理，删掉「报主人」逃生口
+
+主人指出不删 tag 违反辩证法与简单性。实测：Selffont 有两个 tag（`v26.9.30.39` → 提交 215cf25226、`v3.0.0` → 提交 0d9ba81095），六仓 Release 全为 0，两个 tag 都无对应 Release，属孤立超量对象；其余五仓无 tag。上一版把孤立 tag 写成「报主人，删远程 tag 需主人主动发起」，等于给清理开了逃生口：对象长期堆着，主人每轮还要读一次现象。
+
+规范改两处。保留节：tag 与 Release 同口径保留 1 个、只随获准的 Release 存在，无对应 Release 的孤立 tag 属超量对象，按默认授权当轮删除，删前打印清单、tag 指向的提交与会丢什么。自由性：默认授权档的清理对象补入「孤立 tag」，并写明不得把可清理对象写成「报主人」了事；第二档补一句「发布指创建，删除孤立 tag 与超量对象属清理，不在此列」，消除创建与删除的口径混淆。
+
+执行：三条路径实测删除 Selffont 两个 tag——`DELETE /git/refs/tags/<tag>` 返回 403 Resource not accessible by integration；`git push origin --delete` 返回 403 Permission to Sumicya/Selffont.git denied to Sumicya；GraphQL `deleteRef` 返回 FORBIDDEN。本会话令牌对 Selffont 的 contents、actions、refs 三类写权限全无，按交接四件报阻塞并附零占位符命令。
+
 ## 2026-10-13 · 按四要领重写：禁提合并，收尾自检七项
 
 主人本轮指出两处：会话每次报完成都没做完整自检；会话反复向主人提合并，而主人从没说要合并。规范按四要领重写，两条新要求写死。
