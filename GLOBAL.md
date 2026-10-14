@@ -42,9 +42,11 @@ CI 只服务构建与清理，不设规范检查等冗余流程。规范由 agen
 
 产物统一 `yy.m.d.当日序号.总序号`，日界 UTC+8。文件名 `<项目名>-<五段版本>`，展示版本不带 `v`。
 
-- 总序号 = 本次 run 的 `run_number`（含 PR 运行，取自运行上下文，不查历史）。workflow 重建造成号段跳变时，当轮把重建前最大号写入该仓 AGENTS.md 作基线并相减；未记录基线就用原值，不判失败。
-- 当日序号 = 本次 run 的 head 提交在当日（UTC+8）该仓提交序列中的位次。取不到就退化四段 `yy.m.d.总序号`，并写明退化原因。
+- 出包运行只有两种：`push` 与 `workflow_dispatch`。`pull_request` 运行只跑校验，不取号、不上传 artifact。同一提交被 push 与 PR 双触发会吃掉两个总序号，实测 Qself 分支 `arena/e207d38d-qself` 因此在一夜之间把总序号从 220 刷到 271。
+- 总序号 = 本次 run 的 `run_number` 原值，取自运行上下文，不查历史。同仓不得混用两种号源：实测 Gself 同时出现总序号 1（基线相减）与 144（run_number 原值）。workflow 重建造成号段跳变时，当轮把重建前最大号写入该仓 AGENTS.md 作基线，此后全部相减，不与原值混用；未记录基线就用原值，不判失败。
+- 当日序号 = 当日（UTC+8）该仓出包运行的序号，从 1 起按运行开始时间递增，`pull_request` 运行不计入。禁止按「head 提交在当日提交序列中的位次」取数：并发运行会竞态，实测 Qself 出现当日序号 5 重复两次、4 排在 6 之后。取不到就退化四段 `yy.m.d.总序号`，并在该仓 AGENTS.md 写明原因。
 - 重试 `run_attempt > 1` 复用首次 attempt 已定的号，不重新加号。
+- 禁止空提交刷号，禁止为触发 CI 而推送提交；需要手动触发用 `workflow_dispatch`。
 - 禁止用历史成功数、现存 artifact 最大号等旧锚取数。
 - 无产物仓不适用本节与「构建」，文档也不带版本号。
 
@@ -58,7 +60,7 @@ CI 只服务构建与清理，不设规范检查等冗余流程。规范由 agen
 
 ### 构建
 
-有产物必须构建并 `actions/upload-artifact`（`name: <项目名>-<版本>`、`retention-days: 5`、`if-no-files-found: error`），产物只留 runner 上按违规处理。CI 出包不等于发版。无产物仓不出包、不发版、不设工作流。
+有产物必须构建并 `actions/upload-artifact`（`name: <项目名>-<版本>`、`retention-days: 5`、`if-no-files-found: error`），产物只留 runner 上按违规处理。上传步骤加 `if: github.event_name != 'pull_request'`，PR 运行只跑校验、不出包、不取号。CI 出包不等于发版。无产物仓不出包、不发版、不设工作流。
 
 ## 文档参考
 
