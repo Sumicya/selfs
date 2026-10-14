@@ -1,5 +1,9 @@
 # 变更记录
 
+## 2026-10-14 · 去掉 Arena 检讨条款
+
+主人当轮指示：写检讨浪费时间。GLOBAL.md 工作节末段那条「Arena 会话出现辱骂或同等愤怒时，先在当轮回复里写不少于 1000 汉字检讨（每满 100 字标注，写清错在何处、违反哪条、如何改），篇数按主人当轮指定，未指定就写一篇，写在一个文件里交主人，不进仓」整段删除，现行文档里「检讨」0 处命中。错误照旧当轮改条文、当轮报结果，不再另写文书。本文件里三处「检讨」是历史条目原文，记的是当时状态，不改。
+
 ## 2026-10-14 · 分界点记录只引可核对象，预演要有开放 PR，分支扫描排除默认分支
 
 三个仓按 `3d7be5b` 落地，核对结果（取值 2026-10-14T03:55Z）：Qself 提交 f89eac6（`.github/scripts/cleanup.py` 单脚本四判据、`build.yml` 清理作业改调脚本、`pr-check.yml` 新增 `cleanup-preview`，PR check rn=8 三作业 success）；Gself 提交链至 39a67fe（同一套单脚本双模式，PR check run 38508489508 双 job success，预演逐条给出 `.4.145` 来源违规与 `.2.147` 重复当日序号），注册表只剩 `Android CI(android.yml)` 与 `PR check(pr-check.yml)`，上一轮的号源分叉（`build.yml` 与 `android.yml` 两条序列、总序号 1 与 144 并存）已消；Selffont 提交 b0babc9，开 PR #7 触发 `pr-check.yml`，run 38508551473 两 job success。
