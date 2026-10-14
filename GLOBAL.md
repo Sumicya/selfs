@@ -54,6 +54,7 @@ CI 只服务构建与清理，不设规范检查等冗余流程。有产物仓�
 - 同一仓的 artifact 里不得并存两种取数口径。实测 Qself 当日序号序列是 7 → 6 → 6 → 3（旧口径与新口径混在一批产物里），发现即当轮清掉旧口径产物或在 AGENTS.md 说明分界点。
 - 分界点记录只能引可核对象：run 号、事件、head sha、日期，加上删除前那次 API 输出的产物名单原文与取值时间。已删 artifact 的名字不许凭记忆写，因为 artifact 删了就查不到，run 记录还在，写之前用 run 记录逐条核。实证 Qself `AGENTS.md:96` 写「当日序号 6 曾重复（rn=273、rn=275 都是 pull_request 运行仍出包），产物 `Qself-26.10.14.6.273` 与 `.6.275` 已删」，三处错：重复序号 6 的是 rn=272（push）与 rn=273（pull_request），rn=275 是 pull_request 但未出包，`.6.275` 这个产物从未存在。核命令 `gh api "repos/<owner>/<repo>/actions/runs?per_page=100" --jq '.workflow_runs[]|"rn=\(.run_number) \(.event) \(.head_sha[0:8])"'`。
 - 调试 CI 的推送不许吃号：出包工作流不接会话分支的 `push`，会话分支要包用 `workflow_dispatch`。禁止空提交刷号，禁止为触发 CI 而推送提交。
+- 号源收口要看默认分支：默认分支上的出包工作流仍含 `pull_request` 触发时，从旧分支开的 PR（head 不含拆分）会按旧触发跑一次出包工作流、吃掉一个总序号，风险存续到该仓交付进入默认分支为止。会话侧核对必须把它记为已知风险并写明触发条件，不得报「号源已收口」；会话不向非本会话的开放 PR 分支推送，也不做关闭 PR 的动作（关闭只由主人发起）。实证三仓默认分支各含 1 处 `pull_request` 触发（Qself `build.yml`、Gself `android.yml`、Selffont `build.yml`），Qself 开放 PR 2 个，其中 #10 head `arena/01a109fa-qself` 就是这种载体。
 - 重试 `run_attempt > 1` 复用首次 attempt 已定的号，不重新加号。
 - 禁止用历史成功数、现存 artifact 最大号等旧锚取数。
 - 无产物仓不适用本节与「构建」，文档也不带版本号。
@@ -74,7 +75,7 @@ CI 只服务构建与清理，不设规范检查等冗余流程。有产物仓�
 
 有产物仓最多两个工作流：出包工作流与 PR 校验工作流，各一条 `run_number` 序列。PR 校验工作流可以不设，出包工作流不得接 `pull_request`。同仓出现两个都能出包的工作流即违规（实测 Gself 的 `android.yml` 与 `build.yml` 并存，总序号因此分叉）。拆分必须一次做完：删掉出包工作流的 `pull_request` 触发与新建 PR 校验工作流放同一提交，否则 PR 运行继续出包吃号，实证 Gself rn=145 是 `pull_request` 运行却出了产物 `Gself-26.10.14.4.145`。
 
-出包工作流必须构建并 `actions/upload-artifact`（`name: <项目名>-<版本>`、`retention-days: 5`、`if-no-files-found: error`），产物只留 runner 上按违规处理；触发只写 `push`（`branches: [默认分支]`）与 `workflow_dispatch`。PR 校验工作流只跑校验与清理预演（`actions: read`、`CLEANUP_APPLY: 'false'`，只打印将删名单与判据理由，不删），不取号、不上传 artifact、不真删，触发只写 `pull_request`。预演靠 `pull_request` 触发，取预演证据就要有开放 PR：已有开放 PR 的仓直接用它；本无开放 PR 的仓可以开一个（开 PR 是会话侧交付的正常载体，不属发布），但禁止为触发 CI 造空提交或无内容推送，开了也不得提议、催促合并（实证 Selffont 为取预演证据开 PR #7，PR 描述里写明不提议合并）。出包工作流顶部声明 `env: SEGMENTS: 5`（退化四段期改 4，并在该仓 AGENTS.md 写明原因）与 `env: CLEANUP_APPLY: 'true'`，清理作业按四条判据真删，权限最小 `actions: write`；有产物仓缺清理作业即违规。工作流头部注释里的保留数写法必须与「保留」节一致（当日之外每条序列 artifact 5、run 5），不许留旧写法。CI 出包不等于发版。无产物仓不出包、不发版、不设工作流。
+出包工作流必须构建并 `actions/upload-artifact`（`name: <项目名>-<版本>`、`retention-days: 5`、`if-no-files-found: error`），产物只留 runner 上按违规处理；触发只写 `push`（`branches: [默认分支]`）与 `workflow_dispatch`。PR 校验工作流只跑校验与清理预演（`actions: read`、`CLEANUP_APPLY: 'false'`，只打印将删名单与判据理由，不删），不取号、不上传 artifact、不真删，触发只写 `pull_request`。两个工作流的 `SEGMENTS` 必须同值，`CLEANUP_APPLY` 必须相反（出包 `'true'`、PR 校验 `'false'`），否则预演判据与真删判据不一致，预演证据失效。清理脚本启动时打印读到的 `SEGMENTS`、`CLEANUP_APPLY`、产物名前缀、保留数与本次 run 所属序列，让预演日志能独立核对，不靠「job success 所以顶部声明生效」这种推断（实证 Qself 脚本 0 处打印，Gself 2 处、Selffont 1 处）。预演靠 `pull_request` 触发，取预演证据就要有开放 PR：已有开放 PR 的仓直接用它；本无开放 PR 的仓可以开一个（开 PR 是会话侧交付的正常载体，不属发布），但禁止为触发 CI 造空提交或无内容推送，开了也不得提议、催促合并（实证 Selffont 为取预演证据开 PR #7，PR 描述里写明不提议合并）。出包工作流顶部声明 `env: SEGMENTS: 5`（退化四段期改 4，并在该仓 AGENTS.md 写明原因）与 `env: CLEANUP_APPLY: 'true'`，清理作业按四条判据真删，权限最小 `actions: write`；有产物仓缺清理作业即违规。工作流头部注释里的保留数写法必须与「保留」节一致（当日之外每条序列 artifact 5、run 5），不许留旧写法。CI 出包不等于发版。无产物仓不出包、不发版、不设工作流。
 
 ## 文档参考
 
@@ -88,7 +89,7 @@ CI 只服务构建与清理，不设规范检查等冗余流程。有产物仓�
 
 ## 工作
 
-开始任务先读项目 AGENTS.md 和本规范，再核对相关实现。有实际冲突就提问，已明确要求直接执行。项目 AGENTS.md 只记项目事实、必要限制和规范指针，不复制全局规则，不写版本号或同步戳；发现本仓条目与规范冲突，当轮改本仓条目并报主人。只操作授权仓库。改规范同步改 CHANGELOG 和相关文档，并核对一致性。
+开始任务先读项目 AGENTS.md 和本规范，再核对相关实现。有实际冲突就提问，已明确要求直接执行。项目 AGENTS.md 只记现行的项目事实、必要限制和规范指针，不复制全局规则，不写版本号或同步戳，也不留已删规则的解释性残留——条文删除的依据记在该仓 CHANGELOG，AGENTS.md 里不写「某条已于某日删除」这类括注（实证 Selffont `AGENTS.md:7` 在常驻条目里带「2026-10-14：`GLOBAL.md` 5dc0d28 整条删除」的括注，而它的报告报「AGENTS.md 检讨 0 处」，实查 1 处）；发现本仓条目与规范冲突，当轮改本仓条目并报主人。只操作授权仓库。改规范同步改 CHANGELOG 和相关文档，并核对一致性。
 
 ### 收尾自检
 

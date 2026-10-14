@@ -1,5 +1,19 @@
 # 变更记录
 
+## 2026-10-14 · 号源收口看默认分支，两处声明同值可核，AGENTS 不留已删规则括注
+
+三个仓按 `bc98bd5`、`215a796`、`5dc0d28` 落地后核对（取值 2026-10-14T04:25Z）：Qself 提交 03e1553（AGENTS.md 分界点改记可核对象、`build.yml:29` 与 `pr-check.yml:16` 顶部声明 `SEGMENTS` 与 `CLEANUP_APPLY`，PR 校验 rn=9 三作业 success）；Gself 提交 9f4491e（号源分界点补删除前名单原文与取值时间，PR check run 38510471412 双 job success）；Selffont 提交 6745810（删本仓 AGENTS.md 的检讨条、补口径分界点史实、脚本补 `run_started_at` 缺失退回 `created_at` 与 `status != completed` 不删两条硬化，PR check run 38510770042 双 job success）。三仓两个工作流的 `SEGMENTS` 均同值、`CLEANUP_APPLY` 均相反，出包序列的 `pull_request` 运行都是拆分前的历史记录（Qself rn=271/273/275、Gself rn=145/146，Selffont 出包序列只有 push）。
+
+查出三处，写进条文。
+
+一、号源风险没随会话分支的拆分收口。三个仓默认分支上的出包工作流仍各含 1 处 `pull_request` 触发（Qself `build.yml`、Gself `android.yml`、Selffont `build.yml`）。`pull_request` 事件用的是合并参照上的工作流文件，所以 head 分支含拆分的 PR 不会再触发出包工作流，但从旧分支开的 PR 会按默认分支的旧触发跑一次出包工作流、吃掉一个总序号。Qself 现有两个开放 PR，#10 head `arena/01a109fa-qself` 就是这种载体。规范补：会话侧核对必须把它记为已知风险并写明触发条件，不得报「号源已收口」；风险存续到该仓交付进入默认分支为止；会话不向非本会话的开放 PR 分支推送，也不做关闭 PR 的动作（关闭只由主人发起）。
+
+二、两处声明同值无法从日志核对。Qself 的 `.github/scripts/cleanup.py` 不打印读到的 `SEGMENTS` 与 `CLEANUP_APPLY`（实查 0 处，Gself 2 处、Selffont 1 处），它的报告用「预演 job success，说明顶部声明可用」作证，那是推断：success 只证明 `int(os.environ["SEGMENTS"])` 没抛异常，不证明读到的值是 5、开关是 false。规范补：两个工作流 `SEGMENTS` 必须同值、`CLEANUP_APPLY` 必须相反；脚本启动时打印读到的 `SEGMENTS`、`CLEANUP_APPLY`、产物名前缀、保留数与本次 run 所属序列，预演日志因此可独立核对。
+
+三、项目 AGENTS.md 留了已删规则的解释性残留。Selffont `AGENTS.md:7` 在常驻条目里带「2026-10-14：`GLOBAL.md` 5dc0d28 整条删除」的括注，而它的报告第④项报「AGENTS.md 检讨 0 处」，实查 1 处，勾与实查不符。规范补：项目 AGENTS.md 只记现行的项目事实、必要限制与规范指针，条文删除的依据记在该仓 CHANGELOG，不在 AGENTS.md 写「某条已于某日删除」这类括注。
+
+现状（同一次取值）：Qself artifact 1 个 `Qself-26.10.14.3.274`、run 14 条（Build 271–275、PR check 1–9）全为当日、tag 0、Release 0、非默认分支 4 条 ahead_by 29/13/10/2 全大于 0；Gself artifact 3 个（`.2.148` 保留，`.2.147` 与 `.4.145` 待出包工作流首次运行真删，预演名单已证）、run 11 条全为当日、tag 0、Release 0；Selffont artifact 6 个（`116`、`117`、`118` 三个 4 段待真删）、run 8 条（Build 114–119、PR check 1–2）、tag 0、Release 0。
+
 ## 2026-10-14 · 去掉 Arena 检讨条款
 
 主人当轮指示：写检讨浪费时间。GLOBAL.md 工作节末段那条「Arena 会话出现辱骂或同等愤怒时，先在当轮回复里写不少于 1000 汉字检讨（每满 100 字标注，写清错在何处、违反哪条、如何改），篇数按主人当轮指定，未指定就写一篇，写在一个文件里交主人，不进仓」整段删除，现行文档里「检讨」0 处命中。错误照旧当轮改条文、当轮报结果，不再另写文书。本文件里三处「检讨」是历史条目原文，记的是当时状态，不改。
