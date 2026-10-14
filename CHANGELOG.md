@@ -1,5 +1,17 @@
 # 变更记录
 
+## 2026-10-14 · 统一工作流文件名与 name 字段，补撞号处理、遗留分支、清理分级实证
+
+主人问「为什么 CI 文件名字不统一，都是出安卓包，你还有什么问题」。实测三仓（取值 2026-10-14T14:10Z）：Qself `build.yml`（`name: Build`）加 `pr-check.yml`（`name: PR check`）、Selffont 同、Gself 是 `android.yml`（`name: Android CI`）加 `pr-check.yml`；Gself `pr-check.yml` 的 `pull_request` 带 `branches: [ "main" ]`，另两仓不带。规范原先只规定「固定两个工作流」，没规定文件名与 `name` 字段，所以三仓各起各的名。
+
+新增条文：出包一律 `build.yml` 加 `name: Build`，PR 校验一律 `pr-check.yml` 加 `name: PR check`，PR 校验的 `pull_request` 不加 `branches` 过滤；改文件名属基线跳变（GitHub 按工作流文件计 `run_number`，改名即新工作流、序号从 1 起），当轮在该仓 AGENTS.md 记旧序列最后一次运行与新序列第一次运行的 rn 与链接，既存产物不回溯删，当日序号撞号按重复判据办；自检第 5 项加核文件名与 `name` 字段是否统一。
+
+同轮补齐的四处：一，当日序号撞号的处理此前无条文，Qself 自行按「保留总序号最大者」删旧（新算法产物 `.3.276` rn=276 id 11900660871 对旧算法产物 `.3.274` rn=274 id 11864292225），现写死为规范并标明这不算回溯删；判据取「保留 `run_started_at` 较新者」而非「保留总序号最大者」，因为改工作流文件名会造成基线跳变、总序号从 1 回头，按总序号大小判会把新产物删掉、留下旧产物。二，既无开放 PR 也无关闭 PR 的遗留会话分支此前无条文，Qself 实测有 `arena/63fa89b7-qself` ahead_by=10、`arena/614127b9-qself` ahead_by=2 两支，现按 `ahead_by>0` 同口径办理：保留、列事实、去除走差异对比加主人确认。三，Gself PR 校验 run 9 的 cleanup 失败原因已查明为 `delete()` 定义被并行编辑丢掉导致 NameError，非权限类，job 当轮红、该仓提交 `b8b3a5733bc2a3141e0a6b9c2e022beee36ed1cb` 修复，run 10 与 11 success——上一轮记的「原因未验证」按实证改正，并作为「非 403 失败必须红」的实证写进条文。四，清理脚本必须真按返回码分两条路，docstring 与代码不一致按违规处理，启动行打印分级口径与 `CLEANUP_APPLY`；实证 Selffont `cleanup.py` 的 `act()` 对任何非零返回都只打 `::warning::` 后 `return`，无 403 判断、无失败累积、末尾不红 job，而 docstring 写着「典型场景 403」，属声称分级实未分级。
+
+默认分支现状（事实，交付进默认分支才解，不提议合并）：三仓默认分支的出包工作流都还接 `pull_request`（Qself `main:build.yml` = push/pull_request/workflow_dispatch，Gself `main:android.yml` = push branches main + pull_request branches main，Selffont `main:build.yml` = push/pull_request/workflow_dispatch），PR 运行仍吃出包序列号；三仓默认分支 AGENTS.md 仍带版本戳与相反条文（Qself `main:AGENTS.md:76`「全局规范同步（2026-10-05，第十五版）」，Gself `main:AGENTS.md:3`「以 Sumicya/selfs/GLOBAL.md 第十五版为准」加 `:5` 同步节，Selffont `main:AGENTS.md:3`「第二十一版，2026-10-05」、`:4`「上次同步 = 第二十一版」、`:6` 同步节、`:13`「清理 job 必须在默认分支的构建工作流里」、`:48`「只做新包与不做降级」）。三仓会话分支的 AGENTS.md 已改：Qself 引 `a8787a8`、Gself 引 `a8787a8b4b6becf2be142732593a105a0a2672c2` 加链接、Selffont 去掉版本戳并引同一 sha。
+
+澄清一处跨仓分歧：Selffont 会话报「`AGENTS.md:3` 无版本戳、`:13` 是空行，上游指认属误读或缓存失真」。实查两个 ref 不同——`main` 上第 3 行确有「第二十一版，2026-10-05」、第 13 行确有「清理 job 必须在默认分支的构建工作流里」，会话分支 `arena/7478d6df-selffont` 上第 3 行已改为引 sha、第 13 行为空。两边都没错，读的不是同一个 ref；规范已要求引用附 ref 与 sha，此类分歧按 ref 报事实。
+
 ## 2026-10-14 · 撤回「会话分支不出包」：不出包就没法验证改法
 
 主人复核第 3 条时指出 Qself、Selffont、Gself 三仓一直在出包，并质问不出产物怎么验证改法。上一提交 `e6c9e8c58874b5c504ab7d59474c08bc3373c0a9` 写的「会话分支不出包、不取号，验证靠 PR 校验工作流」与配套的「出包工作流必须在脚本开头判 `github.ref` 不是默认分支就失败退出」两条撤回——PR 校验工作流只跑构建与测试、不上传产物，拿不出可装可跑的包，用它「验证」验证不了交付物；那条 `github.ref` 守卫会把唯一的验证路径堵死，属于把规范写成不可执行。
