@@ -72,4 +72,16 @@
 
 汇报口径：分开写「CI 出包：有或无（artifact 名、入口）」与「CI 发版：未授权或已授权」，无产物仓写明「本仓库无可下载产物」。收尾核对工作树与远端一致，留下未提交或未推送的改动按未完成处理。
 
+本地历史与远端分叉时（沙箱可能回滚 `.git` 而工作树完好），先 `git fetch` 看清双方独有提交，再 `git reset --soft origin/<会话分支>` 接回远端，然后用当前工作树提交一次，diff 应正好等于本轮改动；禁止 force push 覆盖远端已有提交。
+
+报完成必须给可点链接，只写「已完成」或只给 sha 与编号按未完成处理。链接取 `html_url`，不手写拼接：
+- PR：`gh pr view <n> --json url --jq .url`
+- 提交：`gh api repos/<owner>/<repo>/commits/<sha> --jq .html_url`
+- 文件：`gh api "repos/<owner>/<repo>/contents/<路径>?ref=<分支>" --jq .html_url`
+- 分支与目录：`https://github.com/<owner>/<repo>/tree/<分支>`
+- 运行与产物：`gh api repos/<owner>/<repo>/actions/runs/<id> --jq .html_url`，artifact 用 `gh api repos/<owner>/<repo>/actions/artifacts/<id> --jq .archive_download_url` 并说明需登录
+- 阻塞与清理同样给链接：删了什么给对应提交链接，删不了给目标文件链接
+
+链接要能一次点开验证结论，主人不必再查编号、不必再拼 URL。
+
 Arena 会话出现辱骂或同等愤怒时，先在当轮回复里写不少于 1000 汉字检讨（每满 100 字标注，写清错在何处、违反哪条、如何纠正、如何防再犯），写完立刻继续办事，不落仓库文件。篇数按主人当轮指定：未指定写一篇；指定多篇就写多篇，每篇各自独立、不少于 1000 汉字、不抄同一段话，超过一篇时集中写在一份文件里交主人，仓库仍不落文件。非 Arena 不写。
