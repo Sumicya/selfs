@@ -4,13 +4,15 @@
 
 三个仓按 `3d7be5b` 落地，核对结果（取值 2026-10-14T03:55Z）：Qself 提交 f89eac6（`.github/scripts/cleanup.py` 单脚本四判据、`build.yml` 清理作业改调脚本、`pr-check.yml` 新增 `cleanup-preview`，PR check rn=8 三作业 success）；Gself 提交链至 39a67fe（同一套单脚本双模式，PR check run 38508489508 双 job success，预演逐条给出 `.4.145` 来源违规与 `.2.147` 重复当日序号），注册表只剩 `Android CI(android.yml)` 与 `PR check(pr-check.yml)`，上一轮的号源分叉（`build.yml` 与 `android.yml` 两条序列、总序号 1 与 144 并存）已消；Selffont 提交 b0babc9，开 PR #7 触发 `pr-check.yml`，run 38508551473 两 job success。
 
-核对中发现四处，都写进条文。
+核对中发现五处，都写进条文。
 
 一、Qself `AGENTS.md:96` 的分界点记录写错对象：「当日序号 6 曾重复（rn=273、rn=275 都是 pull_request 运行仍出包），产物 `Qself-26.10.14.6.273` 与 `.6.275` 已删」。用 run 记录逐条核：rn=271 pull_request e902407b、rn=272 push 7920b0a2、rn=273 pull_request 7920b0a2、rn=274 push 25d56e64、rn=275 pull_request 25d56e64。重复当日序号 6 的是 rn=272（push）与 rn=273（pull_request）；rn=275 是 pull_request 但步骤全 skipped、没有产物；`.6.275` 从未存在；另有 `.7.271` 由 pull_request 运行产出、当日序号 7 排在 6 之前。分界点是后来会话判断哪些号不可信的唯一依据，记错比不记更坏。规范补：分界点记录只能引可核对象（run 号、事件、head sha、日期）加删除前那次 API 输出的名单原文与取值时间，已删 artifact 名不许凭记忆写，条文附核命令。
 
 二、预演依赖开放 PR。PR 校验工作流只接 `pull_request`，会话令牌又没有 `actions` 写权限手动触发，所以没有开放 PR 的仓拿不到预演证据。Selffont 为此开了 PR #7（head `arena/7478d6df-selffont`、base main、open、merged_at null），PR 描述写明不提议合并。规范补：已有开放 PR 的仓直接用它取预演证据；本无开放 PR 的仓可以开一个（开 PR 是会话侧交付的正常载体，不属发布），但禁止为触发 CI 造空提交或无内容推送，开了也不得提议、催促合并。
 
 三、分支扫描没排除默认分支。Qself 报告写「分支 5 支 ahead_by 28/13/10/2/0」并判「无可删」，那个 0 是 `main` 与自己比的结果。结论对、判据错：默认分支 `ahead_by` 恒为 0，脚本不排除就会把默认分支列进可删名单。规范补：扫描候选时必须排除默认分支。
+
+五、回收下游补的两条规则。Qself 的 `.github/scripts/cleanup.py` 里有两处是条文没写的：`run_started_at` 缺失时退回 `created_at`，以及 `status` 不等于 `completed` 的 run 跳过不删。两处都对，前者防字段缺失崩溃，后者防删掉正在排队的运行；条文只写过「正在运行的本次 run 不删」，覆盖面不够。已并入保留节。
 
 四、汇报计数与名单不一致。Qself 报告正文写「run 12 条」，同一条回复贴出的预演名单是 13 行，差在推送前后取了两次值却没标取值时间。规范补：计数必须与同一回复里的名单行数一致并标取值时间，对不上按数字未复核处理。
 
