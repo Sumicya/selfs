@@ -64,11 +64,12 @@
 ### 保留
 
 - Release 1 个。tag 与 Release 同口径保留 1 个，且只随获准的 Release 存在，无对应 Release 的孤立 tag 当轮删。
-- artifact 与运行记录：每条序列各 5 个；承载保留产物的 run 与未完成的 run 不删；排序按 `run_started_at`，缺失退回 `created_at`，`id` 只作同刻 tiebreak。
+- artifact：每个仓最多保留 5 个，按 `created_at` 判新旧并保留最新的 5 个；不得为了删运行记录而误删这 5 个产物。
+- 运行记录：每个工作流最多保留 5 条，包含当日运行；不得因当日、承载产物或其他理由豁免数量上限。按 `run_started_at` 从新到旧保留 5 条，缺失时退回 `created_at`，`id` 只作同刻排序。清理前先列出超限运行及其产物；若超限运行承载不在保留范围内的产物，先删除该产物再删运行。未完成运行若导致超限，先取消较旧的超限运行，再执行清理。
 - 分支：已合入的会话分支保留 0 个，删除的唯一判据是 compare `ahead_by=0`，扫描候选必须排除默认分支。`ahead_by>0` 的一律保留；要去除先取 compare 差异、逐提交写可取处与可去处、给留存或去除建议，向主人确认后才删。
 - 无 CI 仓的工作流清零。
 - 清理 job 权限 `actions: write` 加 `contents: read`，只删本项目 artifact 与 run，不碰最新对象。出包与 PR 校验两个工作流都挂真删，共用同一 `concurrency` group，脚本只有一份。
-- 五条判据：命名口径（段数 ≠ `SEGMENTS`）、来源（`pull_request` 运行的产物）、重复当日序号、号源口径（artifact 名的总序号 ≠ 该 run 的 head sha 的 `git rev-list --count`）、数量超限。五条均不豁免。
+- 五条判据：命名口径（段数 ≠ `SEGMENTS`）、来源（`pull_request` 运行的产物）、重复当日序号、号源口径（artifact 名的总序号 ≠ 该 run 的 head sha 的 `git rev-list --count`）、数量超限。五条均不豁免；运行记录数量判据按每个工作流最多 5 条执行，包含当日运行。
 - 清理失败按原因分：403 打 `::warning::` 写明对象、端点、返回码后继续，不让 job 红；403 以外当轮即让 job 红。
 - job 日志逐个对象打印判据结论与豁免原因。
 
