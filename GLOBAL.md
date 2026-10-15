@@ -57,11 +57,11 @@ CI 只服务构建与清理，不设规范检查等冗余流程。有产物仓�
 ### 保留
 
 - Release 1 个。tag 与 Release 同口径保留 1 个，且只随获准的 Release 存在，无对应 Release 的孤立 tag 当轮删。
-- artifact 与运行记录：当日之外每条序列各 5 个，当日不设上限也不删；承载保留产物的 run 与未完成的 run 不删；排序按 `run_started_at`，缺失退回 `created_at`，`id` 只作同刻 tiebreak。
+- artifact 与运行记录：每条序列各 5 个；承载保留产物的 run 与未完成的 run 不删；排序按 `run_started_at`，缺失退回 `created_at`，`id` 只作同刻 tiebreak。
 - 分支：已合入的会话分支保留 0 个，删除的唯一判据是 compare `ahead_by=0`，扫描候选必须排除默认分支。`ahead_by>0` 的一律保留（含 PR 关闭未合入、无 PR 的遗留分支）；要去除先取 compare 差异、逐提交写可取处与可去处、给留存或去除建议，向主人确认后才删。
 - 无 CI 仓的工作流清零，核法 `gh api repos/<owner>/<repo>/actions/workflows --jq .total_count` 期望 0，默认分支上遗留的工作流文件一并删。
 - 清理 job 权限 `actions: write` 加 `contents: read`，只删本项目 artifact 与 run，不碰最新对象。出包与 PR 校验两个工作流都挂真删，共用同一 `concurrency` group，脚本只有一份。
-- 五条判据：命名口径（段数 ≠ `SEGMENTS`）、来源（`pull_request` 运行的产物）、重复当日序号、号源口径（artifact 名的总序号 ≠ 该 run 的 head sha 的 `git rev-list --count`）、数量超限。前四条不豁免，数量条当日豁免。
+- 五条判据：命名口径（段数 ≠ `SEGMENTS`）、来源（`pull_request` 运行的产物）、重复当日序号、号源口径（artifact 名的总序号 ≠ 该 run 的 head sha 的 `git rev-list --count`）、数量超限。前四条与数量条均不豁免。
 - 清理失败按原因分：403 打 `::warning::` 写明对象、端点、返回码后继续，不让 job 红，同一对象连续两次运行都失败才升级为阻塞项；403 以外当轮即让 job 红，红了的 run 在汇报里列为阻塞项。脚本必须真按返回码分支，docstring 与代码不一致按违规处理。
 - `CLEANUP_APPLY: 'false'` 加 `actions: read` 的只读预演只在 fork PR 或 DELETE 403 时用，「预演已证」不等于已删。
 - job 日志逐个对象打印判据结论与豁免原因，话术不得与实际走的分支矛盾。
@@ -92,7 +92,7 @@ PR 校验工作流跑校验与清理真删，不取号、不上传 artifact，�
 2. `git status --porcelain` 为空，`git log origin/<会话分支>..HEAD` 为空，`git ls-remote` 与本地 HEAD 一致。
 3. 声称改动的条文逐条附 `grep -c` 命中数。
 4. 词面核完再按机制核对：403 责任落到谁、双触发有没有吃号、并发当日序号会不会撞、权限缺口谁补、每条指令的执行者与触发器可不可达。
-5. 五条判据扫描：先跑 `TZ=Asia/Shanghai date +%F` 与 `date -u +%FT%TZ` 定当日，再列每份工作流的总运行数／当日数／当日之外数／超出数、artifact 名单与段数、号源核法（artifact 名的总序号对 head sha 的 `git rev-list --count`）、工作流注册表个数与文件名、Release 与 tag、非默认分支及各自 compare（排除默认分支），末尾附上轮阻塞项复查结果。
+5. 五条判据扫描：先跑 `TZ=UTC-8 date +%F` 与 `date -u +%FT%TZ` 定当日，再列每份工作流的总运行数／当日数／当日之外数／超出数、artifact 名单与段数、号源核法（artifact 名的总序号对 head sha 的 `git rev-list --count`）、工作流注册表个数与文件名、Release 与 tag、非默认分支及各自 compare（排除默认分支），末尾附上轮阻塞项复查结果。
 6. 每条结论有命令证据，链接取自 API 的 `html_url`。
 7. 汇报无提议、催促、询问合并发布，无责任外推。
 
