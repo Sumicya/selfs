@@ -61,9 +61,9 @@ checkout 必须设置 fetch-depth: 0。取号时输出 HEAD SHA、两个序号�
 
 ## 保留与清理
 
-Release 最多保留 1 个；tag 与 Release 同口径最多保留 1 个，且仅随获准的 Release 存在，无对应 Release 的孤立 tag 删除。每个仓最多保留最新的 5 个 artifact；每个工作流最多保留最新的 5 条运行记录。
+Release 最多保留 1 个；tag 与 Release 同口径最多保留 1 个，且仅随获准的 Release 存在，无对应 Release 的孤立 tag 删除。每个工作流最多保留最新的 5 条运行记录，包含当天运行，不设例外；每个仓最多保留最新的 5 个 artifact。运行记录与 artifact 分别计数，运行记录上限优先：若保留某个 artifact 会导致其所属工作流必须保留第 6 条运行记录，则删除该 artifact，不得突破运行记录上限。
 
-artifact 按 created_at 从新到旧排序。运行记录按 run_started_at 排序，缺失时使用 created_at，同刻时以 id 排序。删除超限运行前列出对象及其产物；若它承载不在保留范围内的产物，先删产物再删运行。未完成运行造成超限时，先取消较旧的超限运行。不得误删应保留产物。
+运行记录按 run_started_at 从新到旧排序，缺失时使用 created_at，同刻时以 id 排序；artifact 按 created_at 从新到旧排序。先分别计算每个工作流应保留的 5 条运行记录和全仓应保留的 5 个 artifact，再删除所有超限运行及不在保留范围内的 artifact。删除运行前列出运行及其 artifact；若运行删除会连带删除仍在 artifact 候选保留范围内的对象，也按运行记录上限优先处理，并同步校正 artifact 留存清单。未完成运行造成超限时，先取消较旧的超限运行，再清理。任何关联关系都不得豁免运行记录上限。
 
 会话分支只有在 compare 的 ahead_by=0 且已排除默认分支时，才属于默认授权的删除范围。ahead_by>0 的分支必须保留；若考虑删除，先取差异、逐提交列明可取处与可去处、提出留存或去除建议及后果，等待主人明确确认。
 
