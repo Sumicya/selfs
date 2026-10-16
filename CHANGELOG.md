@@ -1,3 +1,7 @@
+## 2026-10-16 · 禁止 AGENTS.md
+
+任何仓库不得存在 AGENTS.md（含 agents.md、agent.md 等变体）：GLOBAL.md 的 S3 改为禁止条文，仓库类型表与收尾自检第 3 项同步；项目事实与必要限制写进 README，非存储仓 README 末行留规范指针，S1 的 README 结构相应增加「项目限制」与「规范指针」。本仓 README.md 中引用 AGENTS.md 的四处同步改掉。下游待处理：Qself 的 main 与 arena 分支仍有 AGENTS.md，需先把仍有用的内容迁入 README 再删除。
+
 ## 2026-10-16 · 全局规范按仓库类型重排
 
 GLOBAL.md 改为单文件、按仓库类型取用：新增「仓库类型」表（有产物仓、无 CI 仓、纯存储仓、规范仓），CI、版本、保留清理条文编号为 C、V、R 系列便于逐条核对；分支删除与授权规则合并为 A1–A5，消除两处重复；新增「统一风格」S1–S5（README 结构、提交信息格式、AGENTS.md、CHANGELOG、文档）。删除工具清单（DexSQL 与六个外部候选）与外部信息源规则，以及「actions 标识最多出现五次」的字面限制；原文可从提交 80e20b7、d7700ae 取回。同时清除 CHANGELOG.md 末尾的工具输出残留行。规则语义未变更：两个工作流、git 提交数版本号、运行记录与 artifact 各 5 条上限等沿用原口径。

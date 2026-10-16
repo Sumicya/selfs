@@ -40,7 +40,7 @@
 
 | 类型 | 适用条文 | 工作流 | 版本号 | 规范文件 |
 |---|---|---|---|---|
-| 有产物仓（Qself、Gself、Selffont） | 全部 | build.yml + pr-check.yml | 有（V 系列） | README 末尾规范指针，AGENTS.md 可选 |
+| 有产物仓（Qself、Gself、Selffont） | 全部 | build.yml + pr-check.yml | 有（V 系列） | README 末尾规范指针；禁止 AGENTS.md |
 | 无 CI 仓（Selfblox） | A、S、R8 | 清零（total_count=0） | 无 | 同上 |
 | 纯存储仓（qqapk） | A | 无 | 无 | 不加规范文件、工作流、构建或发布机制，除非主人明确要求 |
 | 规范仓（selfs） | A、S | 无 | 无，不带版本号 | CHANGELOG.md 按日期记录 |
@@ -73,9 +73,9 @@
 
 ## 七、统一风格
 
-- **S1 README**：标题不带版本号 → 一句话简介 → 要求 → 安装或使用 → 构建。有产物仓可放 Build 徽章。README 不放维护记录，变更写进 CHANGELOG.md。
+- **S1 README**：标题不带版本号 → 一句话简介 → 要求 → 安装或使用 → 构建 → 项目限制（可选）→ 规范指针（末行）。有产物仓可放 Build 徽章。README 不放维护记录，变更写进 CHANGELOG.md。
 - **S2 提交信息**：`类型: 摘要`，类型取 feat、fix、docs、ci、refactor、revert、chore，摘要用简体中文。GitHub 自动生成的合并提交保持默认。
-- **S3 AGENTS.md**：可选，只写项目事实、必要限制与规范指针，不复制全局规则，不写版本号或同步戳。没有 AGENTS.md 的仓在 README 末尾留一行规范指针。
+- **S3 禁止 AGENTS.md**：任何仓库不得存在 AGENTS.md（含 agents.md、agent.md 等大小写与单复数变体）。项目事实与必要限制写进 README，不复制全局规则，不写版本号或同步戳；每个非存储仓在 README 末行留一行规范指针。已存在的 AGENTS.md 先把仍有用的内容迁入 README，再用 `git rm` 删除。
 - **S4 CHANGELOG.md**：按日期倒序，只留最新 5 条，更早的移入 `bad/`；只记变更，不留工具输出残留。
 - **S5 文档**：简体中文，先给结果；只保留能指导行动、验收或决策的内容；保留必要的官方标识原文。
 
@@ -87,7 +87,7 @@
 
 1. 工作树干净，无未提交或未推送改动。
 2. 远端目标分支 head 与本地预期一致，未强推。
-3. 本仓 README.md、GLOBAL.md、CHANGELOG.md 与适用的 AGENTS.md 口径一致，无相反表述、过期版号或禁用句式。
+3. 本仓 README.md、GLOBAL.md、CHANGELOG.md 口径一致，无相反表述、过期版号或禁用句式，且仓库中不存在 AGENTS.md。
 4. 按任务范围核对产物、运行记录、Release、tag、会话分支与工作流注册表，逐类报告真实数量，不适用项注明原因。
 5. 适用的清理判据（R4）均已实际执行；未执行项标为未验证并说明原因。
 6. 每项完成结论都能定位到文件、行、提交或对象链接；数字注明取值时间与范围。
