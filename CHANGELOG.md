@@ -1,3 +1,7 @@
+## 2026-10-16 · 无 CI 仓允许 VERSION 常量
+
+仓库类型表中「无 CI 仓」的版本号由「无」改为「可选」：脚本内可带单一来源的 VERSION 常量，格式与取数口径沿用 V1–V3（git 提交数，不用 run_number），提交前按提交后的计数预取，提交标题不带版本号。依据：Selfblox 现行分支的 VERSION 与提交计数逐一核对一致（总序号 91、92、93，当日序号 1、2、3）。
+
 ## 2026-10-16 · 禁止 AGENTS.md
 
 任何仓库不得存在 AGENTS.md（含 agents.md、agent.md 等变体）：GLOBAL.md 的 S3 改为禁止条文，仓库类型表与收尾自检第 3 项同步；项目事实与必要限制写进 README，非存储仓 README 末行留规范指针，S1 的 README 结构相应增加「项目限制」与「规范指针」。本仓 README.md 中引用 AGENTS.md 的四处同步改掉。下游待处理：Qself 的 main 与 arena 分支仍有 AGENTS.md，需先把仍有用的内容迁入 README 再删除。

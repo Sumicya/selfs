@@ -41,9 +41,11 @@
 | 类型 | 适用条文 | 工作流 | 版本号 | 规范文件 |
 |---|---|---|---|---|
 | 有产物仓（Qself、Gself、Selffont） | 全部 | build.yml + pr-check.yml | 有（V 系列） | README 末尾规范指针；禁止 AGENTS.md |
-| 无 CI 仓（Selfblox） | A、S、R8 | 清零（total_count=0） | 无 | 同上 |
+| 无 CI 仓（Selfblox） | A、S、R8，版本常量适用 V1–V3 | 清零（total_count=0） | 可选：脚本内 VERSION 常量 | 同上 |
 | 纯存储仓（qqapk） | A | 无 | 无 | 不加规范文件、工作流、构建或发布机制，除非主人明确要求 |
 | 规范仓（selfs） | A、S | 无 | 无，不带版本号 | CHANGELOG.md 按日期记录 |
+
+无 CI 仓的脚本可带单一来源的 `VERSION` 常量，展示版本为 `yy.m.d.当日序号.总序号`，口径与取数命令同 V1–V3，不含项目名，也不引入 run_number。没有 CI 取号，常量在提交前按提交后的计数预取（总序号 = 当前 `git rev-list --count HEAD` + 1，当日序号同理）；提交标题不带版本号，仍按 S2。禁止重写已提交历史（V6），否则常量与计数会失准。
 
 ## 五、有产物仓：工作流与版本
 
