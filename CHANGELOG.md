@@ -1,3 +1,7 @@
+## 2026-10-17 · 纳入 Nagi Skills 参考索引
+
+- 在 S8 增加 `nagi-studio/skills`，限定于需求澄清与方案探索场景按需核读 `grill`、`architect` 等相关 skill；明确该仓库仅为方法参考，不自动安装、执行脚本或进行全局安装。
+
 ## 2026-10-17 · 理顺矛盾，时区只写 UTC+8
 
 - 时区：V1 改为文字、注释、命令一律写 UTC+8，不再保留 `TZ=Asia/Shanghai`；命令用固定偏移（`date -u -d '+8 hours'`，Python `timezone(timedelta(hours=8))`，git `--since` 带 `+08:00`）。已在 660 个时间点（含日界前后 1 秒）上核对，固定偏移与 `TZ=Asia/Shanghai` 结果完全一致。同时把 V1 里「版本」与「项目名-版本」分开，删掉上一版绕口的判断规则。
