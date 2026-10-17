@@ -4,10 +4,10 @@
 
 ## 使用
 
-开始任务先读最新规范和项目 `README.md`，再核对相关实现。有实际冲突就提问，已明确要求直接执行；事实、推断和未验证事项分开说明。
+开始每个工程任务先读最新规范、Ponytail（GLOBAL.md S7）和项目 `README.md`，并按 S8 核读与任务领域相关的辅助仓库和网页，再核对相关实现。有实际冲突就提问，已明确要求直接执行；事实、推断和未验证事项分开说明。
 
 ```text
-读 Sumicya/selfs 最新规范提交 <sha> 的 GLOBAL.md 和当前项目 README.md；本轮任务：……
+读 Sumicya/selfs 最新规范提交 <sha> 的 GLOBAL.md、Ponytail 当前 main 的 skills/ponytail/SKILL.md（记录上游 HEAD SHA）和当前项目 README.md；按 S8 读取与本轮任务相关的辅助仓库及网页；本轮任务：……
 ```
 
 项目事实与必要限制写在项目 `README.md`，末行留规范指针；任何仓库不得存在 `AGENTS.md`。README 不复制全局规则，不写版本号或同步戳。发现本仓条目与规范冲突，当轮改本仓条目并报主人。无法读取远端时如实说明，不假称已读最新。

@@ -4,7 +4,7 @@
 
 ## 效力分层
 
-**硬约束**，任何任务都不得偏离：授权边界与分支（A1–A5）、禁止 force push 与重写已用于出包或版本取数的历史（V6）、清理时的对象范围、写权限隔离与失败分级（R5–R7）、第二节「权威」，以及汇报的真实性（区分事实、推断与未验证事项，缺证据不报通过）。它们防的是不可逆操作和失真的汇报。条文按其明示的触发场景适用：R5–R7 只在执行清理时生效；禁止 force push 普遍适用，而禁止重写历史限于曾用于出包或版本取数的历史。「硬约束」不表示这些操作要求适用于无关场景。
+**硬约束**，任何任务都不得偏离：授权边界与分支（A1–A5）、禁止 force push 与重写已用于出包或版本取数的历史（V6）、清理时的对象范围、写权限隔离与失败分级（R5–R7）、Ponytail 与任务相关辅助资料的必读要求（S7–S8）、第二节「权威」，以及汇报的真实性（区分事实、推断与未验证事项，缺证据不报通过）。它们防的是不可逆操作和失真的汇报。条文按其明示的触发场景适用：R5–R7 只在执行清理时生效；禁止 force push 普遍适用，而禁止重写历史限于曾用于出包或版本取数的历史。「硬约束」不表示这些操作要求适用于无关场景。
 
 **默认做法**，即其余全部条文：四项原则与决策方式、仓库类型表、C 系列、V1–V5、R1–R4、R8、S1–S6，以及收尾自检的具体项目。目标、环境或已有实现有充分理由时可以偏离，不必先问主人；偏离时在汇报里写明条文号、理由与影响，不按违规处理，也不得借此越过硬约束。某条偏离成了常态，说明该条该改，是否修订由主人决定。
 
@@ -42,7 +42,7 @@
 
 ## 四、仓库类型
 
-先判定仓库类型，再取用对应条文。判定不明时向主人确认一次。下表「适用条文」列出各类型的附加规则，不覆盖所有仓库共同适用的授权与分支规则（A1–A5）、本规范的权威与真实性要求，也不覆盖 S3 中「任何仓库不得存在 AGENTS.md」这一普遍禁令。S1 的项目 README 结构适用于项目仓；规范仓 README 按规范仓的用途组织；纯存储仓只适用 S3 的禁令部分，不要求 README 指针。
+先判定仓库类型，再取用对应条文。判定不明时向主人确认一次。下表「适用条文」列出各类型的附加规则，不覆盖所有仓库共同适用的授权与分支规则（A1–A5）、本规范的权威与真实性要求，也不覆盖 S3 中「任何仓库不得存在 AGENTS.md」这一普遍禁令、所有仓库读写任务都适用的 S7，以及按任务领域适用的 S8。S1 的项目 README 结构适用于项目仓；规范仓 README 按规范仓的用途组织；纯存储仓只适用 S3 的禁令部分，不要求 README 指针。
 
 | 类型 | 适用条文 | 工作流 | 版本号 | 规范文件 |
 |---|---|---|---|---|
@@ -79,7 +79,7 @@
 - **R7** 失败按原因区分：清理动作的 403 权限缺口允许 warning 后继续，须写明对象、端点与返回码；403 以外错误必须使当轮失败并报告阻塞项。构建与取号不允许降级，权限不足不得描述为清理成功。
 - **R8** 无 CI 仓的工作流清零，以工作流注册表 total_count=0 验证。
 
-## 七、统一风格
+## 七、统一风格与辅助资料
 
 - **S1 README**：项目仓标题不带版本号 → 一句话简介 → 要求 → 安装或使用 → 构建 → 项目限制（可选）→ 规范指针（末行）；有产物仓可放 Build 徽章。规范仓按其用途组织 README，可用「使用」「修改」等章节，不强套项目安装/构建模板，但 README 末行仍留规范指针。README 不放维护记录，变更写进 CHANGELOG.md。
 - **S2 提交信息**：`类型: 摘要`，类型取 feat、fix、docs、ci、refactor、revert、chore，摘要用简体中文。GitHub 自动生成的合并提交保持默认。
@@ -87,6 +87,12 @@
 - **S4 CHANGELOG.md**：文件名固定为 `CHANGELOG.md`（大小写一致），有变更记录的仓都适用。按日期倒序，只留最新 5 条，更早的原样移入 `bad/CHANGELOG-history.md`（新到旧，加在该文件开头）；只记变更，不留工具输出残留。任务带来用户可见或构建可见的变化时，同一提交里更新最新条目，不事后补记。
 - **S5 文档**：简体中文，先给结果；只保留能指导行动、验收或决策的内容；保留必要的官方标识原文。
 - **S6 工作区图像留存**：仓库工作区里的证据图、预览图、对比图只留「当前仍然成立」的，同一个问题只留最终修完状态那一版。出新图的同一提交里，删掉被它覆盖的旧图，并同步说明文档里的引用与已有留存清单；中间版本留在 git 历史，不留在工作区。各仓目录说明可细化分类、命名、引用和留存理由，不得放宽本条的留存要求。前后对比图在问题修完后按中间版本处理，除非对比对象本身是现行参照（如外部参照图）。删除前后都不得留下指向已删文件的引用。
+- **S7 Ponytail 必读**：每个需要读写仓库、制定或修改工程方案的任务（代码、配置、构建、规范或项目文档均包括在内），开始前必须读取 [Ponytail 上游当前 `main` 的完整核心提示](https://github.com/DietrichGebert/ponytail/blob/main/skills/ponytail/SKILL.md)；新会话、上下文压缩或开始新的工程任务时重新核读，不得凭记忆声称已读。以仓库 README 标示的核心提示路径为准；记录上游 HEAD SHA，并以该 SHA 的文件链接作为查阅证据。读取后遵守其「先理解任务与影响范围、选择最小完整方案、优先复用现有实现/标准库/平台能力、不为少写而删验证与安全措施、完成受影响调用方和测试」等要求。Ponytail 是工程方法来源，不是授权来源；主人当轮指示和本规范的硬约束优先，冲突时不采用与其冲突的格式或行为要求。不得因引用而自动安装插件、复制全部仓库或执行上游脚本。若上游核心提示无法读取，暂停仓库写操作并报告阻塞；只读问答且不制定工程方案时不适用。
+- **S8 任务相关辅助资料**：以下资源是按领域必须核读的参考索引，不要求每个任务通读全部条目；一旦任务涉及对应领域、计划采用其工具或依据其方法，先读当前上游的相关 README、规范或官方文档，再实施，不得只凭二手摘要。引用时记录实际读取的 ref/提交 SHA 或网页标题与读取日期；链接失效先寻找当前官方替代来源，仍无法访问时暂停依赖该资料的操作并报告，不能声称已核对。
+  - **文档与表达任务**：中文技术文档查 [ruanyf/document-style-guide](https://github.com/ruanyf/document-style-guide)、[sparanoid/chinese-copywriting-guidelines](https://github.com/sparanoid/chinese-copywriting-guidelines)；面向首次读者的文档结构查 [Google docguide](https://github.com/google/styleguide/tree/gh-pages/docguide)。
+  - **CLI/项目使用文档**：涉及 Python 工具安装或工作流时查 [uv](https://github.com/astral-sh/uv)；涉及 GitHub CLI 安装、命令或使用说明时查 [cli/cli](https://github.com/cli/cli)。
+  - **逆向分析任务**：仅限自有或明确授权对象。APK 逆向须查当前实际采用工具的上游文档；历史索引 [newliver666/apk-reverse](https://github.com/newliver666/apk-reverse/tree/main/skills/apk-reverse) 使用前先确认仍可访问，若失效不得声称已读，按需另寻当前来源。分析结论的确定性校验查 [reverify](https://github.com/2akouwu/reverify)；使用或评估 Ghidra 时查 [Ghidra 官方文档](https://github.com/NationalSecurityAgency/ghidra)及其 [安全公告](https://github.com/NationalSecurityAgency/ghidra/security/advisories)；使用 REA 时查 [morluto/rea](https://github.com/morluto/rea)。只读必要资料，不自动安装工具、注册 MCP 或执行第三方脚本。
+  - **工具发现与评估任务**：按需检查 [DexSQL](https://github.com/LSPosed/dexsql-release)、[Monid](https://github.com/monid-ai/monid)、[Maskit](https://github.com/xiaYuTian11/maskit)、[LoomFlow](https://github.com/banmu123/LoomFlow)、[vibe-coding-toolkit](https://github.com/soumatheusgomes/vibe-coding-toolkit)、[awesome-jev-tools](https://github.com/v-modal/awesome-jev-tools)、[hypit](https://github.com/hypit-ai/hypit) 的当前上游资料。它们是候选或索引，不代表背书、安装或审计通过；核对维护状态、许可证、权限、数据流向和安全风险后再报告结论。Telegram [鑫源AI分享](https://t.me/xinyuanai) 仅可作为发现线索，不是事实或安全背书；只有任务涉及开源工具发现时才查阅，频道宣传须回到官方来源独立核实。
 
 ## 八、工作流程与收尾自检
 
