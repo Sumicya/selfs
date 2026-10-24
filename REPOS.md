@@ -2,15 +2,15 @@
 
 各仓共用做法的集中说明。改到 CI、版本、README、变更记录、图留存或设计取向时参考；有理由可以不同，汇报里写明即可。优先级低于 GLOBAL.md 的四个要领和底线。
 
-## 方法资料（按需）
+## 方法资料（必读，见 GLOBAL.md 底线）
 
 - [Ponytail](https://github.com/DietrichGebert/ponytail/blob/main/skills/ponytail/SKILL.md)：工程方法，先理解影响范围、选最小完整方案、优先复用现有实现。
 - [nagi-studio/skills](https://github.com/nagi-studio/skills)：`grill`（分轮追问）、`architect`（技术方案比较）。读过并采用其中的做法时，在汇报里写明用了哪条。
 - 它们是方法来源，不是授权来源；主人当轮指示和 GLOBAL.md 的底线优先。不要因引用而自动安装、执行其安装命令。
 
-## 参考资料（按领域，按需核读）
+## 参考资料（按领域，任务涉及时必读）
 
-以下资源按领域按需核读，不要求每个任务通读；一旦任务涉及对应领域、计划采用其工具或依据其方法，先读当前上游的相关 README、规范或官方文档，再实施，不得只凭二手摘要。引用时记录实际读取的 ref / 提交 SHA 或网页标题与读取日期；链接失效先寻找当前官方替代来源，仍无法访问时暂停依赖该资料的操作并报告，不能声称已核对。
+以下资源按领域核读，不要求每个任务通读全部；一旦任务涉及对应领域、计划采用其工具或依据其方法，先读当前上游的相关 README、规范或官方文档，再实施，不得只凭二手摘要。引用时记录实际读取的 ref / 提交 SHA 或网页标题与读取日期；链接失效先寻找当前官方替代来源，仍无法访问时暂停依赖该资料的操作并报告，不能声称已核对。
 - **CLI/项目使用文档**：涉及 Python 工具安装或工作流时查 [uv](https://github.com/astral-sh/uv)；涉及 GitHub CLI 安装、命令或使用说明时查 [cli/cli](https://github.com/cli/cli)。
 - **逆向分析任务**：仅限自有或明确授权对象。APK 逆向须查当前实际采用工具的上游文档。分析结论的确定性校验查 [reverify](https://github.com/2akouwu/reverify)；使用或评估 Ghidra 时查 [Ghidra 官方文档](https://github.com/NationalSecurityAgency/ghidra)及其 [安全公告](https://github.com/NationalSecurityAgency/ghidra/security/advisories)；使用 REA 时查 [morluto/rea](https://github.com/morluto/rea)。只读必要资料，不自动安装工具、注册 MCP 或执行第三方脚本。
 - **工具发现与评估任务**：按需检查 [DexSQL](https://github.com/LSPosed/dexsql-release)、[Monid](https://github.com/monid-ai/monid)、[Maskit](https://github.com/xiaYuTian11/maskit)、[LoomFlow](https://github.com/banmu123/LoomFlow)、[vibe-coding-toolkit](https://github.com/soumatheusgomes/vibe-coding-toolkit)、[awesome-jev-tools](https://github.com/v-modal/awesome-jev-tools)、[hypit](https://github.com/hypit-ai/hypit) 的当前上游资料。它们是候选或索引，不代表背书、安装或审计通过；核对维护状态、许可证、权限、数据流向和安全风险后再报告结论。Telegram [鑫源AI分享](https://t.me/xinyuanai) 为优先检查的消息源，仅可作为发现线索，不是事实或安全背书；只有任务涉及开源工具发现时才查阅，频道宣传须回到官方来源独立核实，报告时必须标注「未独立核实」，不得直接写入规范、决策记录或当最终结论。
