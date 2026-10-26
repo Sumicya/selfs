@@ -1,3 +1,11 @@
+## 2026-10-26 · 合回单文件 GLOBAL.md，全部工具仓库必读，版本号改回 CI 运行数，无 CI 仓手动计数
+
+- **合回单文件 GLOBAL.md（删 REPOS.md）且全部 14 个工具与方法仓库必读**：按主人选定 B，将目录边界、CI 结构、版本口径、清理规则、文档与收尾自检全部合回单文件 `GLOBAL.md` 并删除 `REPOS.md`，根治拆成两份文件后 Agent 漏读第二份文件的问题。按主人决定，将 Ponytail、`nagi-studio/skills`、`uv`、`cli/cli`、`reverify`、`ghidra`、`rea`、`dexsql-release`、`monid`、`maskit`、`LoomFlow`、`vibe-coding-toolkit`、`awesome-jev-tools`、`hypit` 共 14 个上游仓库全部设为开工必读；汇报中除自己仓库外，其他外部仓库链接非必要可以不列。
+- **有产物仓版本号改回 CI 运行数，无 CI 仓改为手动计数**：按主人决定，为防止多次 git 提交刷版本号（如 Qself 提交数刷到 3182、Selffont 刷到 480），有产物仓的五段版本 `yy.m.d.当日序号.总序号` 号源从 `git rev-list --count` 改回 `build.yml` 的运行计数。总序号（及 Android `versionCode`）直接取 `github.run_number` 原值，不做基线相减，从提交数切回 CI 数引起的数值回退照常使用（主人设备端有覆盖安装模块）；当日序号按差值锚定法 `当前 run_number - 当日首条 run_number + 1` 计算（当日首条取 API 现存当日运行与现存当日产物反推值的最小者），防止单日超 5 次运行后旧 run 被清理删除导致序号撞号；清理脚本第 4 条「号源口径」判据同步改为 `总序号 == workflow_run.run_number`，切换过渡期在首个新口径产物出成前暂留最新 1 个旧产物；checkout 不再要求 `fetch-depth: 0`。无 CI 仓（`Selfblox`）按主人决定改为脚本内 `VERSION` 手动计数，随实际交付手动更新，不再绑 `git rev-list --count`。
+- **统一三仓 CI 风格**：`build.yml` 固定 `build`、`cleanup-artifacts`、`cleanup-releases` 三个作业，`pr-check.yml` 固定 `check`、`cleanup-artifacts` 两个作业；`.github/scripts/cleanup.py` 统一环境变量（`GH_TOKEN`、`REPO`、`RUN_ID`、`SEGMENTS`、`CLEANUP_APPLY`、`CLEANUP_SCOPE=actions|releases`）；步骤名统一用简洁中文短语，顶部注释不超过 5 行，禁止私加 `::error::` 正则摘录或 `$GITHUB_STEP_SUMMARY` 日志尾巴。
+- **严禁乱写工具、伪测试与假宿主引擎（如 `smoke.lua`）入库**：辅助脚本目录统一为 `tools/`（不设 `ci/`、`scripts/`；单文件脚本仓如 `Selfblox` 保持根目录单文件结构）。严禁向仓库提交四类文件：① Agent 汇报与流程辅助脚本（如 `tools/report_links.py`）；② 读取源码文本做字符串匹配的伪测试（如 `Qself` 的 `tools/test_*.py` 与 `.github/scripts/test_cleanup.py`）；③ 手写假宿主引擎替身（如 `Selfblox` 在最新 Delta 执行根本不需要的 `smoke.lua` 与 `tools/luau-driver/`）；④ 一次性生图脚本（`make_*_preview.py`、`render_*.py`）与淘汰的算法原型（如 `Selffont` 的 41 个 `tools/*.py`、15 个 `tests/*.py`、`docs/round-preview/` 日期子目录）。
+- **时区与本仓一致性**：在 `GLOBAL.md` 底线与收尾自检写死汇报正文、日志、注释中的所有时间（含 API 取值时间）一律换算写为 `UTC+8`，严禁写零时区后缀 `Z`。同步更新 `README.md` 去除 `REPOS.md` 与旧编号引用。
+
 ## 2026-10-23 · 松绑：规范只留四个要领和底线
 
 - 主人要求给 Agent 松绑，不要那么多限制发挥的规范，主要留四个要领。GLOBAL.md 从 19KB 压到 2.6KB：四个要领（辩证法、简单性、先进性、自由性）加五条底线（不可逆操作、汇报如实、看得见、提交与文档、检讨）。
@@ -24,13 +32,3 @@
 - 规范生效点：以 selfs main 的最新提交为准，规范改动先在 arena 分支做、合并进 main 后才生效，未合并不生效；每个任务开始前和每次收尾前取 main 当前 SHA 与上次读取比较，不同就先读 diff 再继续；收尾模板新增「规范」一行，写开始与收尾时的 SHA。起因：主人每次更新规范都要手动提醒 arena；原来的「未指定取最新规范提交」在分支未合并时没有明确含义。
 - A4 补充：继承旧分支时保留其提交，不得压成一个提交；删除旧分支前确认其全部提交可从新分支到达，并改掉文档里引用旧提交 SHA 的地方。起因：Selffont 的新分支继承旧分支后只剩一个提交（+8803 −596），标题是英文的 `Add font research and Tsukushi B redesign brief`，旧分支随后被删；文档里 `git show <旧SHA>:…` 这类历史指引是否仍可用，我没有核实。
 - 未验证：新增的 SHA 核对规则还没有在 arena 会话里实测过。
-
-## 2026-10-21 · 合并 5 级拷打压缩稿与此前决定的第二稿
-
-- 基线：arena/rewrite-global-20261020 上的压缩稿（48f831d），保留它的结构、硬约束上移、诚实汇报与检讨加硬，以及「3–5 分钟可读完全部硬约束」的目标。
-- 补回压缩稿删掉、但此前已由主人决定的内容：提交标题 `类型: 中文摘要`（含 revert 改写）；提交 SHA 一律写成完整可点击链接；外观类结果必须把图本身摆在回复里、先入库再展示、好坏由主人判断；检讨全文直接贴出、多篇也全部贴出；不以「你认吗」结束一轮；「权威」以主人指定的提交为准；README 固定章节顺序与不放徽章；CHANGELOG 同日并入同一条、历史文件名与同提交更新；工作区旧图规则；设计取向记录；UTC+8 与固定偏移命令；孤立 tag 仅限带项目前缀的；清理失败分级；禁止加 spec-check 作业；工具、逆向、发现类参考资料与 Telegram 频道线索（已撤掉失效的 newliver666/apk-reverse）。
-- 新增默认值：追问强度默认 1（浅问），决策记录写进变更记录条目，主人写「N 级」时按 N 级；起因是 Qself 会话问完强度和记录就停工。此条是推荐项，尚未得到主人确认。
-- 修正压缩稿的两处问题：仓库类型表里「无 CI 仓」写了「清理权限隔离」，但它没有 CI，已改为「本节除版本与清理外」；「质量过关」只能由主人宣布，不再由 Agent 声称。
-- 按「允许较大重写、不保证兼容」，V、R、S 的编号不再保留，改用条目名，正文中以「原 S2」「原 S6」「原 S9」标注来源。
-- 压缩稿的 CHANGELOG 已有 6 条，超过 5 条，这次移出最旧的两条。
-- 未验证：这是文字合并，没有任何仓库按它重新跑过；C1–C6 升为硬约束沿用压缩稿，未再确认。
