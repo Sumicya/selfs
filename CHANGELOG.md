@@ -1,9 +1,10 @@
-## 2026-10-26 · 版本号改回 CI 运行数，无 CI 仓手动计数，重写统一规范并禁伪测试与假引擎
+## 2026-10-26 · 合回单文件 GLOBAL.md，全部工具仓库必读，版本号改回 CI 运行数，无 CI 仓手动计数
 
+- **合回单文件 GLOBAL.md（删 REPOS.md）且全部 14 个工具与方法仓库必读**：按主人选定 B，将目录边界、CI 结构、版本口径、清理规则、文档与收尾自检全部合回单文件 `GLOBAL.md` 并删除 `REPOS.md`，根治拆成两份文件后 Agent 漏读第二份文件的问题。按主人决定，将 Ponytail、`nagi-studio/skills`、`uv`、`cli/cli`、`reverify`、`ghidra`、`rea`、`dexsql-release`、`monid`、`maskit`、`LoomFlow`、`vibe-coding-toolkit`、`awesome-jev-tools`、`hypit` 共 14 个上游仓库全部设为开工必读（取当前 HEAD SHA、核读文档并在收尾汇报逐一贴出 SHA 与完整可点击链接）。
 - **有产物仓版本号改回 CI 运行数，无 CI 仓改为手动计数**：按主人决定，为防止多次 git 提交刷版本号（如 Qself 提交数刷到 3182、Selffont 刷到 480），有产物仓的五段版本 `yy.m.d.当日序号.总序号` 号源从 `git rev-list --count` 改回 `build.yml` 的运行计数。总序号（及 Android `versionCode`）直接取 `github.run_number` 原值，不做基线相减，从提交数切回 CI 数引起的数值回退照常使用（主人设备端有覆盖安装模块）；当日序号按差值锚定法 `当前 run_number - 当日首条 run_number + 1` 计算（当日首条取 API 现存当日运行与现存当日产物反推值的最小者），防止单日超 5 次运行后旧 run 被清理删除导致序号撞号；清理脚本第 4 条「号源口径」判据同步改为 `总序号 == workflow_run.run_number`，切换过渡期在首个新口径产物出成前暂留最新 1 个旧产物；checkout 不再要求 `fetch-depth: 0`。无 CI 仓（`Selfblox`）按主人决定改为脚本内 `VERSION` 手动计数，随实际交付手动更新，不再绑 `git rev-list --count`。
-- **重写并收紧 REPOS.md，统一三仓 CI 风格**：清掉条文里打补丁式的旧账括号，将 `REPOS.md` 重写为无废话的统一规则，并在 `GLOBAL.md` 底线要求开工必读 `GLOBAL.md` 与 `REPOS.md`。`build.yml` 固定 `build`、`cleanup-artifacts`、`cleanup-releases` 三个作业，`pr-check.yml` 固定 `check`、`cleanup-artifacts` 两个作业；`.github/scripts/cleanup.py` 统一环境变量（`GH_TOKEN`、`REPO`、`RUN_ID`、`SEGMENTS`、`CLEANUP_APPLY`、`CLEANUP_SCOPE=actions|releases`）；步骤名统一用简洁中文短语，顶部注释不超过 5 行，禁止私加 `::error::` 正则摘录或 `$GITHUB_STEP_SUMMARY` 日志尾巴。
+- **统一三仓 CI 风格**：`build.yml` 固定 `build`、`cleanup-artifacts`、`cleanup-releases` 三个作业，`pr-check.yml` 固定 `check`、`cleanup-artifacts` 两个作业；`.github/scripts/cleanup.py` 统一环境变量（`GH_TOKEN`、`REPO`、`RUN_ID`、`SEGMENTS`、`CLEANUP_APPLY`、`CLEANUP_SCOPE=actions|releases`）；步骤名统一用简洁中文短语，顶部注释不超过 5 行，禁止私加 `::error::` 正则摘录或 `$GITHUB_STEP_SUMMARY` 日志尾巴。
 - **严禁乱写工具、伪测试与假宿主引擎（如 `smoke.lua`）入库**：辅助脚本目录统一为 `tools/`（不设 `ci/`、`scripts/`；单文件脚本仓如 `Selfblox` 保持根目录单文件结构）。严禁向仓库提交四类文件：① Agent 汇报与流程辅助脚本（如 `tools/report_links.py`）；② 读取源码文本做字符串匹配的伪测试（如 `Qself` 的 `tools/test_*.py` 与 `.github/scripts/test_cleanup.py`）；③ 手写假宿主引擎替身（如 `Selfblox` 在最新 Delta 执行根本不需要的 `smoke.lua` 与 `tools/luau-driver/`）；④ 一次性生图脚本（`make_*_preview.py`、`render_*.py`）与淘汰的算法原型（如 `Selffont` 的 41 个 `tools/*.py`、15 个 `tests/*.py`、`docs/round-preview/` 日期子目录）。
-- **时区与本仓一致性**：在 `GLOBAL.md` 底线与 `REPOS.md` 收尾自检写死汇报正文、日志、注释中的所有时间（含 API 取值时间）一律换算写为 `UTC+8`，严禁写零时区后缀 `Z`。同步修正 `README.md` 旧引用，将 `REPOS.md` 权限从 `100755` 修正为 `100644`。
+- **时区与本仓一致性**：在 `GLOBAL.md` 底线与收尾自检写死汇报正文、日志、注释中的所有时间（含 API 取值时间）一律换算写为 `UTC+8`，严禁写零时区后缀 `Z`。同步更新 `README.md` 去除 `REPOS.md` 与旧编号引用。
 
 ## 2026-10-23 · 松绑：规范只留四个要领和底线
 
