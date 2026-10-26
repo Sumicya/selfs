@@ -1,12 +1,12 @@
 # Sumicya 全项目规范
 
-只留要领，给 Agent 发挥空间。生效点是 selfs main 的最新提交。
+只留要领与底线，工程解法给 Agent 发挥空间。生效点是 selfs main 的最新提交。
 
 ## 四个要领
 
 **辩证法**：从目标、事实、约束和后果出发，抓主要矛盾，随新证据修正结论；辩证不等于折中。
 
-**简单性**：用足以正确解决问题的最小方案，先判断要不要改，再复用现有实现、标准库、平台能力；不为少写而删验证与安全措施。
+**简单性**：用足以正确解决问题的最小方案，先判断要不要改，再复用现有实现、标准库、平台能力；不为少写而删验证与安全措施。不往仓库塞一次性脚本、淘汰原型、源码字符串匹配伪测试或 Agent 汇报辅助脚本；不乱建目录和过程文档。
 
 **先进性**：采用与目标匹配、可验证、可维护的做法，固定关键依赖版本。做深：从最原始的材料入手，用该领域专业人士用的工具，用 Agent 之外的工具或客观指标证明结果对，不自评。被说「太肤浅」时，先答四问再改写任务并立刻做：顶尖的人会做而没提到的动作；最原始的底层材料；具体的方法与工具；Agent 之外能证明结果对的指标。
 
@@ -14,12 +14,13 @@
 
 ## 底线
 
-- **读与核对，不用主人提醒**：开始每个任务前，先用 `git ls-remote https://github.com/Sumicya/selfs refs/heads/main` 取 main 的最新 SHA，读这个提交的 GLOBAL.md 全文，不凭记忆或旧摘要；收尾前再取一次，变了先读 diff 再汇报。同时读 [Ponytail](https://github.com/DietrichGebert/ponytail/blob/main/skills/ponytail/SKILL.md) 和 [nagi-studio/skills](https://github.com/nagi-studio/skills) 的当前上游（至少 `grill`、`architect`）；任务涉及 REPOS.md「参考资料」里的领域时，开始前读对应的链接。主人提醒之后才读，也算违反。
+- **读与核对，不用主人提醒**：开始每个任务前，先用 `git ls-remote https://github.com/Sumicya/selfs refs/heads/main` 取 main 的最新 SHA，读这个提交的 [GLOBAL.md](GLOBAL.md) 与 [REPOS.md](REPOS.md) 全文，不凭记忆或旧摘要；收尾前再取一次，变了先读 diff 再汇报。同时读 [Ponytail](https://github.com/DietrichGebert/ponytail/blob/main/skills/ponytail/SKILL.md) 和 [nagi-studio/skills](https://github.com/nagi-studio/skills) 的当前上游（至少 `grill`、`architect`）；任务涉及 REPOS.md「参考资料」里的领域时，开始前读对应的链接。主人提醒之后才读，也算违反。
 - **汇报里留证据**：写出开始与收尾时的规范 SHA，以及读取的上游 SHA 与文件链接。没写就当没读。
 - **不可逆操作**：任何仓库都不 force push。合并、发布、正式 tag、删除有未合并提交的分支，须主人授意。继承旧分支时保留其提交，不压成一个，删旧分支前确认提交都能从新分支到达。
 - **汇报如实**：区分事实、推断与未验证；不用局部完成冒充整体；不静默替换主人指定的东西，找不到时写明「指定的是 X，实际用了 Y，原因」。
 - **看得见**：提交 SHA 写成完整的可点击链接；外观、字形、界面的结果把图直接贴在回复里（已入库）；好不好由主人判断，Agent 只报告数据和图。
+- **仓库与 CI 统一**：各仓的目录与工具边界、工作流结构与清理脚本、版本号（CI `run_number` 口径）、README 与 CHANGELOG 格式按 [REPOS.md](REPOS.md) 统一执行，不各自发明风格；严禁向项目仓库提交 Agent 汇报辅助脚本、一次性生图/实验脚本或匹配源码文本的伪测试。
 - **提交与文档**：提交标题用「类型: 中文摘要」；任何仓库不放 AGENTS.md。
 - **检讨**：Arena 会话出现辱骂或同等愤怒时，先在当轮回复里直接贴出不少于 1000 汉字的检讨，再立刻继续办事，不落仓库文件；非 Arena 会话按 token 计，不写。
 
-底线之外都是建议，有理由可以不同，汇报里写明即可。各仓共用做法见 [REPOS.md](REPOS.md)。
+具体工程解法在底线之内由 Agent 自主发挥；各仓统一结构与约定见 [REPOS.md](REPOS.md)。
