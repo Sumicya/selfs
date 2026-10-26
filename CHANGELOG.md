@@ -1,10 +1,11 @@
-## 2026-10-27 · 清理作业构建失败也要跑，号源只留 CI 运行数并要求攒推送
+## 2026-10-27 · 重写工作流结构与版本口径：清理必须 always()，号源只留 CI 运行数，推送要攒
 
-- **清理作业加 `if: always()`（C2/C3）**：`cleanup-artifacts` / `cleanup-releases` 只写 `needs: build` 时，构建一红就整体跳过清理，失败运行只吃号不清理，运行记录会堆到上限之上。实测 Selffont：`build.yml` 现存 9 条运行（上限 5）+ 5 个 artifact，共 14 个对象挂在 Actions 页一次没被清，原因就是 211–214 四次构建全红、清理作业连续四轮跳过。改为 `needs: build` + `if: always()`（`cleanup-releases` 为 `if: always() && 默认分支`）。
-- **号源唯一**：版本口径里写明有产物仓号源只有 CI 运行数一处，禁止改用提交数、时间戳或手工常量。
-- **新增「攒推送、别刷号」**：每次推送都吃一个 `run_number`，一次会话把同类改动攒成一次推送，推送前先在本地跑完自检与构建；禁止把小修逐个推送、拿 CI 当编译器反复试错，也禁止为改版本号单独提交或推送。
-- **起因（事实，可复算）**：Selffont 的 `build.py` 仍按 2026-10-14 的旧口径 `git rev-list --count` 取号，某会话 2026-10-26 23:39–23:48（UTC+8）连推 6 次、产出 4 次失败运行（`run_number` 211–214，全红在 `build.py --check` 的 `supplemental_font_reference`），最新产物仍叫 `Selffont-26.10.26.1.481`，而它对应的 `run_number` 只有 `210`——号源没迁移 + 推送没攒，两个口子一起把版本号刷到 481（提交数），CI 数停在 210。Qself 已在 2026-10-26 23:29–23:38（UTC+8）迁移到 `run_number`（`build.yml` 里现取 `gh api` 算 `R_first`）。
-- **未完成**：Selffont 的迁移补丁已写好并本地自检通过（`build.py --check` 10 项全过），但本会话的 GitHub 令牌对 `Sumicya/Selffont` 只读，`git push` 与删除 artifact 均返回 HTTP 403（`Resource not accessible by integration`），补丁未落到远端；产物与运行记录的清理同样未执行。
+- **工作流结构（C2/C3 重写）**：`cleanup-artifacts` 与 `cleanup-releases` 一律 `needs: build` + `if: always()`（后者再与默认分支条件相与），并写清 `always()` 不是装饰：只写 `needs` 时构建一红清理整体跳过，保留上限当场失效；`PR check` 的 `cleanup-artifacts` 明写「不写 `needs`、始终运行」。实测成因：Selffont `build.py --check` 连红四轮（`run_number` 211–214）、清理连续跳过四轮，`build.yml` 堆到 9 条运行 + 5 个产物共 14 个对象，一条没清。
+- **版本口径（重写）**：开头立「号源只有一处」——只由 CI 运行数产生，禁止提交数、时间戳、手工常量或任何本地计数；并写明「改工作流文件名 / 并发 / PR 运行不让号回头留洞」由 `run_number` 与差值锚定自己保证，不靠换号源解决。旧口径的相反表述已在 2026-10-26 条目统一，正文无残留。
+- **新增「攒推送、别刷号」**：每次推送吃一个 `run_number`，一次会话把同类改动攒成一次推送、推送前本地跑完自检与构建；禁止逐个推小修、拿 CI 当编译器试错、为改版本号单独提交或推送。
+- **清理规则补口径**：失败／取消／跳过的运行与成功运行一样占号、一样计入 5 条上限；「构建失败所以本轮不清理」被明确写成上限失效的直接成因。
+- **起因（可复算，UTC+8）**：Selffont 号源仍挂在提交数上，产物 `Selffont-26.10.26.1.481` 对应 `run_number=210`，当时分支提交数正好 481、之后 6 次推送变 487；Qself 已在 23:29–23:41 迁移到 `run_number`（产物 `26.10.26.5.347` 对 `run_number=347`）。
+- **未完成**：Selffont 的迁移补丁本地自检通过（`build.py --check` 10 项全过）但未落远端——本会话令牌对该仓只读，`git push` 与删除 artifact 均 HTTP 403。
 
 ## 2026-10-26 · 合回单文件 GLOBAL.md，全部工具仓库必读，版本号改回 CI 运行数，无 CI 仓手动计数
 
