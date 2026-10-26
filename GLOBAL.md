@@ -74,8 +74,10 @@
 - **C1** 有产物仓固定两个工作流：`.github/workflows/build.yml`（`name: Build`）与 `.github/workflows/pr-check.yml`（`name: PR check`），缺一或多一都属违规。改名用 `git mv`。
 - **C2** `Build` 触发仅 `push`（不限分支）与 `workflow_dispatch`，固定三个 job：
   1. `build`：完成静态/落点校验、取版本号、编译测试与上传 artifact；权限仅 `contents: read` 与 `actions: read`，**不得**授 `actions: write` 或把清理塞进 `build` 步骤；前置校验并入 `build` 步骤，不另拆平级 job。
-  2. `cleanup-artifacts`：`needs: build`，权限 `actions: write` + `contents: read`，运行 `python3 .github/scripts/cleanup.py`（`CLEANUP_SCOPE: actions`）。
-  3. `cleanup-releases`：`needs: build`，条件 `if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)`，权限仅 `contents: write`，checkout 设 `persist-credentials: false`，运行 `python3 .github/scripts/cleanup.py`（`CLEANUP_SCOPE: releases`）。
+  2. `cleanup-artifacts`：`needs: build` + `if: always()`，权限 `actions: write` + `contents: read`，运行 `python3 .github/scripts/cleanup.py`（`CLEANUP_SCOPE: actions`）。
+  3. `cleanup-releases`：`needs: build` + `if: always() && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)`，权限仅 `contents: write`，checkout 设 `persist-credentials: false`，运行 `python3 .github/scripts/cleanup.py`（`CLEANUP_SCOPE: releases`）。
+
+清理作业一律带 `if: always()`：构建失败或取消时也必须清理。`needs: build` 不带 `always()` 时，构建一红清理整体跳过，失败运行只吃号不清理，运行记录会堆到上限之上（2026-10-27 实测 Selffont `build.yml` 9 条运行、产物 5 个，共 14 个对象，全部超过或顶在上限，一次也没被清）。
 - **C3** `PR check` 触发仅 `pull_request`（不加 `branches` 过滤），不取版本号、不上传产物，固定两个 job：`check`（跑校验与测试，权限 `contents: read`）与 `cleanup-artifacts`（权限 `actions: write` + `contents: read`，运行 `python3 .github/scripts/cleanup.py`，`CLEANUP_SCOPE: actions`）。
 - **C4** 两个工作流均在文件顶层 `env:` 声明 `SEGMENTS: '5'` 与 `CLEANUP_APPLY: 'true'`；所有清理 job 共用同一份 `.github/scripts/cleanup.py` 与同一 `concurrency` group `<项目名小写>-cleanup`（`cancel-in-progress: false`），统一传入环境变量：`GH_TOKEN: ${{ github.token }}`、`REPO: ${{ github.repository }}`、`RUN_ID: ${{ github.run_id }}`、`CLEANUP_SCOPE: actions`（或 `releases`）。
 - **C5** 步骤 `name` 统一用简洁中文短语；工作流顶部注释不超过 5 行，只写当前职责；**禁止**私加正则抓取 `::error::` 注解或 `$GITHUB_STEP_SUMMARY` 日志尾巴；checkout 默认浅克隆即可。
@@ -85,11 +87,12 @@
 
 展示版本不带 `v`、不带项目名；artifact 与发行名为 `项目名-版本`。时区一律写 `UTC+8`（固定偏移 `date -u -d '+8 hours'`，Python 用 `timezone(timedelta(hours=8))`），文字、注释、命令、日志与汇报里严禁出现零时区后缀 `Z` 或时区地名。禁止空提交、无内容提交。
 
-- **有产物仓（CI 运行数，防提交刷号）**：
+- **有产物仓（CI 运行数，防提交刷号）**：号源只有 CI 运行数一处，禁止改用提交数、时间戳或手工常量。
   - 五段 `yy.m.d.当日序号.总序号`（`SEGMENTS=5`，日界 `UTC+8`）。不用 `git rev-list --count`。
   - **总序号** = `build.yml` 本次运行的 `github.run_number` 原值（Android `versionCode` 同取该值）。不做基线相减；从提交数切回 CI 数或改工作流后数值变小照常使用（设备端有覆盖安装模块）。
   - **当日序号** = 当日（`UTC+8`）`build.yml` 运行的位次（从 1 起，失败运行同样占号，PR check 运行永不计入）。按差值锚定法计算：通过 GitHub API 取 `build.yml` 当日（`run_started_at` 转 `UTC+8` 日期等于当日）现存运行的最小 `run_number`，以及当日现存合规产物 `项目名-yy.m.d.d0.r0` 反推的 `r0 - d0 + 1`，取二者中的最小值作为当日首条运行号 `R_first`（若均无则为当前 `run_number`），`当日序号 = 当前 run_number - R_first + 1`。同一 `run_id` 重试（`run_attempt > 1`）保持同一版本号。
   - 取号时输出 `HEAD SHA`、`run_id`、`run_number`、`R_first`、当日序号与最终版本，失败即退出，不降级。
+- **攒推送、别刷号**：每次推送都会吃一个 `run_number`，一次会话把同类改动攒成一次推送，推送前先在本地跑完自检与构建；禁止把小修逐个推送、拿 CI 当编译器反复试错，也禁止为改版本号单独提交或单独推送。2026-10-27 实测：某会话 9 分钟内连推 6 次、产出 4 次失败运行，而版本号仍挂在提交数上，产物 `26.10.26.1.481` 对应的 CI 运行数只有 `210`——号源没改、推送没攒，两个口子一起把版本号刷到 481。
 - **无 CI 仓（手动计数）**：
   - 可在脚本内维护单一来源的 `VERSION` 常量（如 `Selfblox`），按实际功能交付**手动计数**（随业务代码提交一并手动更新，不用 `git rev-list --count` 硬绑 git 提交数，更不得为了改版本号单独发提交）。
 
