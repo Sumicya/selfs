@@ -4,10 +4,10 @@
 
 ## 使用
 
-开始每个工程任务先用 `git ls-remote https://github.com/Sumicya/selfs refs/heads/main` 取最新 SHA，读 [GLOBAL.md](GLOBAL.md) 全文、取 [GLOBAL.md](GLOBAL.md)「必读工具与方法仓库」全部 14 个上游仓库的当前 HEAD SHA 并核读其核心文档，再读项目 `README.md` 与核对相关实现。有实际冲突就提问，已明确要求直接执行；事实、推断和未验证事项分开说明。
+开始每个工程任务先用 `git ls-remote https://github.com/Sumicya/selfs refs/heads/main` 取最新 SHA，读 [GLOBAL.md](GLOBAL.md) 全文、取 [GLOBAL.md](GLOBAL.md)「必读工具与方法仓库」全部 15 个上游仓库的当前 HEAD SHA 并核读其核心文档，再读项目 `README.md` 与核对相关实现。有实际冲突就提问，已明确要求直接执行；事实、推断和未验证事项分开说明。
 
 ```text
-读 Sumicya/selfs main 最新提交 <sha> 的 GLOBAL.md 全文，读取 GLOBAL.md「必读工具与方法仓库」全部 14 个上游仓库当前 HEAD 和当前项目 README.md；本轮任务：……
+读 Sumicya/selfs main 最新提交 <sha> 的 GLOBAL.md 全文，读取 GLOBAL.md「必读工具与方法仓库」全部 15 个上游仓库当前 HEAD 和当前项目 README.md；本轮任务：……
 ```
 
 项目事实与必要限制写在项目 `README.md`，末行留规范指针；任何仓库不得存在 `AGENTS.md`。README 不复制全局规则，不写版本号或同步戳，不登记 Agent 汇报辅助脚本或假引擎测试。发现本仓条目与规范冲突，当轮改本仓条目并报主人。无法读取远端时如实说明，不假称已读最新。

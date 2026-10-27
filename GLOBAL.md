@@ -14,8 +14,8 @@
 
 ## 底线
 
-- **读与核对，不用主人提醒**：开始每个任务前，先用 `git ls-remote https://github.com/Sumicya/selfs refs/heads/main` 取 `main` 的最新 SHA，读这个提交的 `GLOBAL.md` 全文，不凭记忆或旧摘要；收尾前再取一次，变了先读 diff 再汇报。同时**全部工具与方法仓库必读**：开始每个任务前，取下方「必读工具与方法仓库」全部 14 个上游仓库的当前 HEAD SHA 并核读其核心文档。主人提醒之后才读，也算违反。
-- **汇报里留证据**：写出开始与收尾时的规范 SHA 及自己仓库的可点击链接；除自己仓库外，其他外部仓库链接非必要可以不列。
+- **读与核对，不用主人提醒**：开始每个任务前，先用 `git ls-remote https://github.com/Sumicya/selfs refs/heads/main` 取 `main` 的最新 SHA，读这个提交的 `GLOBAL.md` 全文，不凭记忆或旧摘要；收尾前再取一次，变了先读 diff 再汇报。同时**全部工具与方法仓库必读**：开始每个任务前，取下方「必读工具与方法仓库」全部 15 个上游仓库的当前 HEAD SHA 并核读其核心文档。主人提醒之后才读，也算违反。
+- **汇报里留证据**：写出开始与收尾时的规范 SHA 及自己仓库的可点击链接；「资料」行逐一写出全部必读上游的 HEAD 短 SHA（不附链接）；除自己仓库外，其他外部仓库链接非必要可以不列。
 - **不可逆操作**：任何仓库都不 force push。合并、发布、正式 tag、删除有未合并提交的分支，须主人授意。继承旧分支时保留其提交，不压成一个，删旧分支前确认提交都能从新分支到达。
 - **汇报如实**：区分事实、推断与未验证；不用局部完成冒充整体；不静默替换主人指定的东西，找不到时写明「指定的是 X，实际用了 Y，原因」。
 - **看得见**：自己仓库的提交 SHA 写成完整的可点击链接；外观、字形、界面的结果把图直接贴在回复里（已入库）；好不好由主人判断，Agent 只报告数据和图。
@@ -26,7 +26,7 @@
 
 ## 必读工具与方法仓库（全部必读）
 
-开始每个任务前，须用 `git ls-remote` 取下列全部 14 个上游仓库的当前 HEAD SHA 并核读其核心 skill 或 `README.md`；汇报里除自己仓库外，其他外部链接非必要可以不列（实际采用了其中某条做法或工具时写明即可）。它们是方法与工具参考来源，不是授权来源；只读上游资料，**禁止**自动安装工具、注册 MCP 或执行第三方安装命令与脚本。链接失效时先寻找官方替代来源，仍无法访问时报告阻塞，不得假称已读。
+开始每个任务前，须用 `git ls-remote` 取下列全部 15 个上游仓库的当前 HEAD SHA 并核读其核心 skill 或 `README.md`，收尾汇报的「资料」行逐一写出这 15 个 HEAD 短 SHA（不附链接），实际采用了其中某条做法或工具时再写明采用项；除自己仓库外，其他外部仓库链接非必要可以不列。它们默认只是方法与工具参考来源，不是授权来源：未获授权时只读上游资料，不自动安装工具、不注册 MCP、不执行第三方安装命令与脚本、不改写 Agent 配置；主人当轮明确授权后，被授权的上游可视为授权来源，按授权范围安装、注册、执行或改配置，并在汇报里写明授权范围。链接失效时先寻找官方替代来源，仍无法访问时报告阻塞，不得假称已读。
 
 1. **工程方法**：[Ponytail](https://github.com/DietrichGebert/ponytail/blob/main/skills/ponytail/SKILL.md)（`DietrichGebert/ponytail`，先理解影响范围、选最小完整方案、优先复用现有实现）
 2. **思考与交付技能**：[nagi-studio/skills](https://github.com/nagi-studio/skills)（`grill` 分轮追问、`architect` 技术方案比较、`prove-it` 拿证据交差）
@@ -42,6 +42,7 @@
 12. **工程配置模板候选**：[vibe-coding-toolkit](https://github.com/soumatheusgomes/vibe-coding-toolkit)（`soumatheusgomes/vibe-coding-toolkit`）
 13. **类型化决策工具索引**：[awesome-jev-tools](https://github.com/v-modal/awesome-jev-tools)（`v-modal/awesome-jev-tools`）
 14. **视频 Agent 候选**：[hypit](https://github.com/hypit-ai/hypit)（`hypit-ai/hypit`）
+15. **反逆向防护**：[BLA](https://github.com/qybaihe/bla)（`qybaihe/bla`，针对 REA 等 AI 逆向 Agent 的防护与验证工具，与第 7 条 REA 互为攻防两端）。默认只读其 `README.md` 与 `.agents/skills/blind-llm-agents/`；`npx bla-agents setup` 会注册 MCP 与 skill 并改写 Claude Code、Cursor、Codex 等多个 Agent 的配置，按本节规则须主人当轮授权后才可运行，授权后该上游视为授权来源。
 
 补充线索与使用边界：
 - Telegram [鑫源AI分享](https://t.me/xinyuanai) 仅在涉及开源工具发现时作为线索源查阅，须回到官方仓库核对维护状态、许可证、权限、数据流向与安全风险，报告时标注「未独立核实」。
@@ -137,7 +138,7 @@ CHANGELOG.md：文件名固定（大小写一致），按日期倒序，只留�
 - 图：回复里已摆出的图及其仓库链接。
 - 自检 1–6：每项一行，结论加证据。
 - 规范：开始时与收尾时 selfs main 的 SHA；两者不同则写明已重读的变更。
-- 资料：实际采用外部方法或工具资料时写明（除自己仓库外，其他链接非必要可不列）。
+- 资料：逐一写出 15 个必读上游的 HEAD 短 SHA（不附链接）；实际采用外部方法或工具时写明采用项与授权范围，除自己仓库外其他链接非必要可不列。
 - 设计原则：本轮新增或修改的条目。
 - 偏离：偏离的条文号或条目名与理由。
 - 阻塞：端点、返回码、缺少的权限类别和可执行命令。
