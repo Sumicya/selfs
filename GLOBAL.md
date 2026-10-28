@@ -1,6 +1,6 @@
 # Sumicya 全项目规范
 
-唯一对外规范文件，生效点是 selfs `main` 的最新提交。具体工程解法留给 Agent 发挥，但底线、必读仓库、目录边界、CI 结构、版本口径、清理规则与文档格式全仓统一执行。
+唯一对外规范文件，生效点是 selfs 的最新提交：有 open 状态规范 PR 时为其 head 提交（多个时取 `updated_at` 最近者），无 open 规范 PR 时为 `main` 的最新提交。具体工程解法留给 Agent 发挥，但底线、必读仓库、目录边界、CI 结构、版本口径、清理规则与文档格式全仓统一执行。
 
 ## 四个要领
 
@@ -14,8 +14,8 @@
 
 ## 底线
 
-- **读与核对，不用主人提醒**：开始每个任务前，先用 `git ls-remote https://github.com/Sumicya/selfs refs/heads/main` 取 `main` 的最新 SHA，读这个提交的 `GLOBAL.md` 全文，不凭记忆或旧摘要；收尾前再取一次，变了先读 diff 再汇报。同时**全部工具与方法仓库必读**：开始每个任务前，取下方「必读工具与方法仓库」全部 15 个上游仓库的当前 HEAD SHA 并核读其核心文档。主人提醒之后才读，也算违反。
-- **汇报里留证据**：写出开始与收尾时的规范 SHA 及自己仓库的可点击链接；「资料」行逐一写出全部必读上游的 HEAD 短 SHA（不附链接）；除自己仓库外，其他外部仓库链接非必要可以不列。
+- **读与核对，不用主人提醒**：开始每个任务前，先取生效提交：跑 `gh api 'repos/Sumicya/selfs/pulls?state=open&per_page=10'` 查 open 规范 PR，有则取其 head SHA（多个取 `updated_at` 最近者）并记下分支名，无则用 `git ls-remote https://github.com/Sumicya/selfs refs/heads/main` 取 `main` SHA；读这个提交的 `GLOBAL.md` 全文，不凭记忆或旧摘要；收尾前再取一次，变了先读 diff 再汇报。同时**全部工具与方法仓库必读**：开始每个任务前，取下方「必读工具与方法仓库」全部 15 个上游仓库的当前 HEAD SHA 并核读其核心文档。主人提醒之后才读，也算违反。
+- **汇报里留证据**：写出开始与收尾时生效提交的 ref 名、完整 SHA 与提交时间（UTC+8），及自己仓库的可点击链接；「资料」行逐一写出全部必读上游的 HEAD 短 SHA（不附链接）；除自己仓库外，其他外部仓库链接非必要可以不列。
 - **不可逆操作**：任何仓库都不 force push。发布、正式 tag、删除带不可达提交的分支须主人授意。两类删除不再逐次请示、按规则自动执行并在汇报写明：① **合并后删**——全仓开启「合并后自动删除 head 分支」（GitHub 仓库设置，对应 API 字段 `delete_branch_on_merge=true`），PR 合并后其 head 分支由平台自动删除；② **继承后删**——继承旧分支时保留其全部提交、不压成一个，新分支推送后先跑 `git merge-base --is-ancestor <旧分支 tip> <新分支>`，全部提交可从新分支到达即自动删旧分支，不可达则保留并报主人。
 - **汇报如实**：区分事实、推断与未验证；不用局部完成冒充整体；不静默替换主人指定的东西，找不到时写明「指定的是 X，实际用了 Y，原因」。
 - **看得见**：自己仓库的提交 SHA 写成完整的可点击链接；外观、字形、界面的结果把图直接贴在回复里（已入库）；好不好由主人判断，Agent 只报告数据和图。
@@ -73,7 +73,19 @@
 ## 工作流结构（C1–C6）
 
 - **C1** 有产物仓固定两个工作流：`.github/workflows/build.yml`（`name: Build`）与 `.github/workflows/pr-check.yml`（`name: PR check`），缺一或多一都属违规。改名用 `git mv`。
-- **C2** `Build` 触发仅 `push`（不限分支）与 `workflow_dispatch`，固定三个 job：
+- **C2** `Build` 触发仅 `push`（不限分支）与 `workflow_dispatch`，固定三个 job。`push` 必须声明 `paths-ignore` 平台过滤，名单全仓统一：
+   ```yaml
+   on:
+     push:
+       paths-ignore:
+         - '**.md'        # 含 README、CHANGELOG 等全部 Markdown 文档
+         - 'docs/**'
+         - 'bad/**'
+         - 'LICENSE'
+         - '.gitignore'
+     workflow_dispatch:
+   ```
+   边界三条：①推送文件全部命中名单时不创建 run、不占 `run_number`，混入任一非忽略文件则整体照常运行；②`.github/**`、脚本与一切代码、构建路径禁止进名单，改工作流自身必触发；③单次推送超 1000 提交或 diff 生成超时，平台强制运行。`workflow_dispatch` 不受路径过滤影响；`pr-check.yml` 不取号不出包，不加过滤。
   1. `build`：完成静态/落点校验、取版本号、编译测试与上传 artifact；权限仅 `contents: read` 与 `actions: read`，**不得**授 `actions: write` 或把清理塞进 `build` 步骤；前置校验并入 `build` 步骤，不另拆平级 job。
   2. `cleanup-artifacts`：`needs: build` 且 `if: always()`，权限 `actions: write` + `contents: read`，运行 `python3 .github/scripts/cleanup.py`（`CLEANUP_SCOPE: actions`）。
   3. `cleanup-releases`：`needs: build` 且 `if: always() && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)`，权限仅 `contents: write`，checkout 设 `persist-credentials: false`，运行 `python3 .github/scripts/cleanup.py`（`CLEANUP_SCOPE: releases`）。
@@ -95,7 +107,7 @@
   - **总序号** = `build.yml` 本次运行的 `github.run_number` 原值（Android `versionCode` 同取该值）。不做基线相减；从提交数切回 CI 数或改工作流后数值变小照常使用（设备端有覆盖安装模块）。
   - **当日序号** = 当日（`UTC+8`）`build.yml` 运行的位次（从 1 起，失败运行同样占号，PR check 运行永不计入）。按差值锚定法计算：通过 GitHub API 取 `build.yml` 当日（`run_started_at` 转 `UTC+8` 日期等于当日）现存运行的最小 `run_number`，以及当日现存合规产物 `项目名-yy.m.d.d0.r0` 反推的 `r0 - d0 + 1`，取二者中的最小值作为当日首条运行号 `R_first`（若均无则为当前 `run_number`），`当日序号 = 当前 run_number - R_first + 1`。同一 `run_id` 重试（`run_attempt > 1`）保持同一版本号。
   - 取号时输出 `HEAD SHA`、`run_id`、`run_number`、`R_first`、当日序号与最终版本，取不到即退出，不降级、不编数。
-- **攒推送、别刷号**：每次推送都吃一个 `run_number`，一次会话把同类改动攒成一次推送，推送前先在本地跑完自检与构建；禁止把小修逐个推送、拿 CI 当编译器反复试错，也禁止为改版本号单独提交或单独推送。2026-10-27 实测：某会话 9 分钟内连推 6 次、产出 4 次失败运行，号源又还挂在提交数上，产物 `26.10.26.1.481` 对应的 CI 运行数只有 `210`——号源没迁移、推送没攒，两个口子一起把版本号刷到 481（该分支当时提交数恰好 481，之后再推 6 次变 487）。
+- **攒推送、别刷号**：每次推送都吃一个 `run_number`，一次会话把同类改动攒成一次推送，推送前先在本地跑完自检与构建；禁止把小修逐个推送、拿 CI 当编译器反复试错，也禁止为改版本号单独提交或单独推送。2026-10-27 实测：某会话 9 分钟内连推 6 次、产出 4 次失败运行，号源又还挂在提交数上，产物 `26.10.26.1.481` 对应的 CI 运行数只有 `210`——号源没迁移、推送没攒，两个口子一起把版本号刷到 481（该分支当时提交数恰好 481，之后再推 6 次变 487）。`paths-ignore` 是平台兜底，不免除本条攒推送义务：同提交含代码与文档时照常运行，只有纯文档、纯忽略路径的推送才被过滤。
 - **无 CI 仓（手动计数）**：
   - 可在脚本内维护单一来源的 `VERSION` 常量（如 `Selfblox`），按实际功能交付**手动计数**（随业务代码提交一并手动更新，不用 `git rev-list --count` 硬绑 git 提交数，更不得为了改版本号单独发提交）。
 
@@ -137,7 +149,7 @@ CHANGELOG.md：文件名固定（大小写一致），按日期倒序，只留�
 - 链接：head 提交链接，以及 compare 链接。
 - 图：回复里已摆出的图及其仓库链接。
 - 自检 1–6：每项一行，结论加证据。
-- 规范：开始时与收尾时 selfs main 的 SHA；两者不同则写明已重读的变更。
+- 规范：开始时与收尾时生效提交的 ref 名与完整 SHA；两者不同则写明已重读的变更。
 - 资料：逐一写出 15 个必读上游的 HEAD 短 SHA（不附链接）；实际采用外部方法或工具时写明采用项与许可范围，除自己仓库外其他链接非必要可不列。
 - 设计原则：本轮新增或修改的条目。
 - 偏离：偏离的条文号或条目名与理由。

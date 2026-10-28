@@ -1,3 +1,12 @@
+## 2026-10-28 · 生效点改最新提交（open 规范 PR head 优先），build.yml 统一 paths-ignore 过滤纯文档推送
+
+- 生效点从「`main` 最新提交」改为「最新提交」：有 open 状态规范 PR 时以其 head 提交为准（多个取 `updated_at` 最近者），无 open PR 才回退 `main`；开工流程改为先 `gh api` 查 open PR、无则 `git ls-remote` 回退，汇报证据改为生效 ref 名+完整 SHA+提交时间（UTC+8）。GLOBAL 四处（生效点定义、开工流程、汇报证据、收尾模板）与 README 三处同口径改写，清除相反表述。
+- C2 加 `paths-ignore` 平台过滤统一名单（`**.md`、`docs/**`、`bad/**`、`LICENSE`、`.gitignore`）：纯文档推送不创建 run、不占 `run_number`，混入任一代码文件即整体照常运行；`.github/**`、脚本与一切代码/构建路径禁止进名单，改工作流自身必触发；超 1000 提交或 diff 超时平台强制运行、`workflow_dispatch` 不受影响、`pr-check.yml` 不加过滤，三条边界写进条文。依据 github/docs 官方 workflow-syntax 与 skip-workflow-runs 原文、cli/cli `lint.yml` 生产实证（仅改 Markdown 的 trunk 提交在带过滤工作流零 run，过滤不留 `run_number` 洞，删 run 才留洞）。
+- 「攒推送、别刷号」戒律保留，明确 `paths-ignore` 是平台兜底、不替代自觉，双轨并行；判断权不留在 agent 手中，不由 agent 自行决定跑不跑 CI。
+- 失败号提案不采纳：总序号维持 `github.run_number` 原值，失败/取消/跳过运行照常占号、照常计入 5 条上限，差值锚定法保留，两仓现行取号实现零改动。
+- 裸奔条文审计 20 条的处置：禁刷 CI 与禁为版本号单独推送 2 条随 `paths-ignore` 平台收口；force push 禁令的分支保护开关受令牌 403 阻塞，只给手动命令、不自研检查；其余 17 条维持方法级原文；不设条文强制级标注、不新增规范检查器。
+- 起因（UTC+8）：Qself 会话分支纯规范类推送连占 build `run_number` 351–355（含 1 次失败运行），戒律无机制拦截；同轮 Gself `cleanup.py` 前缀写死 `Qself-` 导致首个新口径产物被清理 job 删除的事故已修复（前缀改由 REPO 推导，#58 产物存活且 join 对齐）。
+
 ## 2026-10-27 · 分支收口自动化：合并后自动删 head 分支，继承确认可达即自动删旧分支
 
 - 主人定的分支收口规则，替代此前删分支逐次授意：① 全部 Sumicya 仓库开启 GitHub 设置「Automatically delete head branches」（API 字段 `delete_branch_on_merge=true`），PR 合并后 head 分支由平台自动删除；② 继承旧分支时仍保留全部提交、不压成一个，新分支推送后跑 `git merge-base --is-ancestor <旧分支 tip> <新分支>`，全部提交可达即自动删旧分支，不可达则保留并报主人。发布、正式 tag、删除带不可达提交的分支仍须主人授意，force push 仍全禁。
@@ -30,12 +39,3 @@
 - **统一三仓 CI 风格**：`build.yml` 固定 `build`、`cleanup-artifacts`、`cleanup-releases` 三个作业，`pr-check.yml` 固定 `check`、`cleanup-artifacts` 两个作业；`.github/scripts/cleanup.py` 统一环境变量（`GH_TOKEN`、`REPO`、`RUN_ID`、`SEGMENTS`、`CLEANUP_APPLY`、`CLEANUP_SCOPE=actions|releases`）；步骤名统一用简洁中文短语，顶部注释不超过 5 行，禁止私加 `::error::` 正则摘录或 `$GITHUB_STEP_SUMMARY` 日志尾巴。
 - **严禁乱写工具、伪测试与假宿主引擎（如 `smoke.lua`）入库**：辅助脚本目录统一为 `tools/`（不设 `ci/`、`scripts/`；单文件脚本仓如 `Selfblox` 保持根目录单文件结构）。严禁向仓库提交四类文件：① Agent 汇报与流程辅助脚本（如 `tools/report_links.py`）；② 读取源码文本做字符串匹配的伪测试（如 `Qself` 的 `tools/test_*.py` 与 `.github/scripts/test_cleanup.py`）；③ 手写假宿主引擎替身（如 `Selfblox` 在最新 Delta 执行根本不需要的 `smoke.lua` 与 `tools/luau-driver/`）；④ 一次性生图脚本（`make_*_preview.py`、`render_*.py`）与淘汰的算法原型（如 `Selffont` 的 41 个 `tools/*.py`、15 个 `tests/*.py`、`docs/round-preview/` 日期子目录）。
 - **时区与本仓一致性**：在 `GLOBAL.md` 底线与收尾自检写死汇报正文、日志、注释中的所有时间（含 API 取值时间）一律换算写为 `UTC+8`，严禁写零时区后缀 `Z`。同步更新 `README.md` 去除 `REPOS.md` 与旧编号引用。
-
-## 2026-10-23 · 松绑：规范只留四个要领和底线
-
-- 主人要求给 Agent 松绑，不要那么多限制发挥的规范，主要留四个要领。GLOBAL.md 从 19KB 压到 2.6KB：四个要领（辩证法、简单性、先进性、自由性）加五条底线（不可逆操作、汇报如实、看得见、提交与文档、检讨）。
-- 其余全部搬进新文件 REPOS.md，作为参考而不是约束：仓库类型、工作流结构、版本口径、清理规则、README 与文档、旧图、设计取向、方法资料、收尾模板与自检。有理由可以不同，汇报里写明即可。
-- 取消：硬约束与默认做法的分层；授权 A1–A6、诚实汇报逐条、提问式重写的细则不再单列，收进底线和自由性。
-- 保留并写进四个要领：被说肤浅时的四问、不自评、问完不停工、按消息计次。
-- 工具仓库、链接与最新规范仍然必读，写进底线第一条：开始每个任务前取 selfs main 最新 SHA 并读 GLOBAL.md 全文，收尾前再取一次；读 Ponytail 与 nagi-studio/skills 当前上游，任务涉及领域时读 REPOS.md 里对应的链接；汇报里写出规范 SHA 与读取的上游 SHA、文件链接，没写就当没读，主人提醒后才读也算违反。起因：部分 agent 要主人提醒之后才读工具仓库和链接，规范更新后也要主人手动提醒。
-- 假设：把「四个要领」理解为原有的四项原则（辩证法、简单性、先进性、自由性）。主人指的若是别的四条，需要重改。
