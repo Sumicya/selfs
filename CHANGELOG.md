@@ -1,3 +1,28 @@
+## 2026-10-28 · 生效点改最新提交（open 规范 PR head 优先），build.yml 统一 paths-ignore 过滤纯文档推送
+
+- 生效点从「`main` 最新提交」改为「最新提交」：有 open 状态规范 PR 时以其 head 提交为准（多个取 `updated_at` 最近者），无 open PR 才回退 `main`；开工流程改为先 `gh api` 查 open PR、无则 `git ls-remote` 回退，汇报证据改为生效 ref 名+完整 SHA+提交时间（UTC+8）。GLOBAL 四处（生效点定义、开工流程、汇报证据、收尾模板）与 README 三处同口径改写，清除相反表述。
+- C2 加 `paths-ignore` 平台过滤统一名单（`**.md`、`docs/**`、`bad/**`、`LICENSE`、`.gitignore`）：纯文档推送不创建 run、不占 `run_number`，混入任一代码文件即整体照常运行；`.github/**`、脚本与一切代码/构建路径禁止进名单，改工作流自身必触发；超 1000 提交或 diff 超时平台强制运行、`workflow_dispatch` 不受影响、`pr-check.yml` 不加过滤，三条边界写进条文。依据 github/docs 官方 workflow-syntax 与 skip-workflow-runs 原文、cli/cli `lint.yml` 生产实证（仅改 Markdown 的 trunk 提交在带过滤工作流零 run，过滤不留 `run_number` 洞，删 run 才留洞）。
+- 「攒推送、别刷号」戒律保留，明确 `paths-ignore` 是平台兜底、不替代自觉，双轨并行；判断权不留在 agent 手中，不由 agent 自行决定跑不跑 CI。
+- 失败号提案不采纳：总序号维持 `github.run_number` 原值，失败/取消/跳过运行照常占号、照常计入 5 条上限，差值锚定法保留，两仓现行取号实现零改动。
+- 裸奔条文审计 20 条的处置：禁刷 CI 与禁为版本号单独推送 2 条随 `paths-ignore` 平台收口；force push 禁令的分支保护开关受令牌 403 阻塞，只给手动命令、不自研检查；其余 17 条维持方法级原文；不设条文强制级标注、不新增规范检查器。
+- 起因（UTC+8）：Qself 会话分支纯规范类推送连占 build `run_number` 351–355（含 1 次失败运行），戒律无机制拦截；同轮 Gself `cleanup.py` 前缀写死 `Qself-` 导致首个新口径产物被清理 job 删除的事故已修复（前缀改由 REPO 推导，#58 产物存活且 join 对齐）。
+
+## 2026-10-27 · 分支收口自动化：合并后自动删 head 分支，继承确认可达即自动删旧分支
+
+- 主人定的分支收口规则，替代此前删分支逐次授意：① 全部 Sumicya 仓库开启 GitHub 设置「Automatically delete head branches」（API 字段 `delete_branch_on_merge=true`），PR 合并后 head 分支由平台自动删除；② 继承旧分支时仍保留全部提交、不压成一个，新分支推送后跑 `git merge-base --is-ancestor <旧分支 tip> <新分支>`，全部提交可达即自动删旧分支，不可达则保留并报主人。发布、正式 tag、删除带不可达提交的分支仍须主人授意，force push 仍全禁。
+- 同步三处条文：底线「不可逆操作」写明两类自动删除及其边界；「仓库与 CI 统一」把该仓库设置列为全仓统一项；收尾自检第 3 项要求汇报自动删除的分支名与祖先核对证据。
+- 设置落地：2026-10-28 UTC+8 主人在有权限环境把六个存量仓（selfs、Qself、Selffont、Selfblox、Gself、qqapk）全部翻转为 true，GraphQL `deleteBranchOnMerge` 逐仓核实通过；本会话令牌对 Update a repository 接口仍 403（缺 Administration 写权限），agent 侧翻转遇 403 按阻塞处理并给命令。
+- GitHub 无账号级默认开关（个人账号设置页只管默认分支名，模板仓不继承该设置，官方社区讨论 #145139、#13991 的同类请求截至 2026-10 仍未实现）：为免新建仓漏开，「仓库与 CI 统一」加一条——新建仓在创建当轮由 agent 跑 `gh repo edit <owner/repo> --delete-branch-on-merge` 开启并汇报，不靠主人手点。
+- 存量待决：selfs 两个已合并分支 `arena/11e62422-selfs`（`56854c3`）、`arena/21178275-selfs`（`3b4af6d`）经祖先核对均可从 main 到达，仓库设置不溯及既往，是否立即手删待主人示下。
+
+## 2026-10-27 · 必读仓库增至 15 个（新增 qybaihe/bla），装工具先提出经主人许可，资料行强制短 SHA
+
+- 「必读工具与方法仓库」新增第 15 个 qybaihe/bla（BLA，Blind LLM Agents）：针对 REA 等 AI 逆向 Agent 的防护与验证工具，与第 7 条 REA 互为攻防两端；底线与本节引言两处「全部 14 个」同步改 15，本仓 README.md 两处同口径一并改。
+- 按主人定的权力边界重写安装规则，消除「无由限制 agent 权力」的问题：可读与想用分开——必读义务只覆盖核读，读取随时进行，列入必读不赋予安装或执行的权力；要安装工具、注册 MCP、执行第三方安装命令或脚本、改写 Agent 配置，agent 先向主人提出并说明用途与影响，经主人许可后按许可范围执行，汇报写明许可范围。上游始终是参考来源、不是授权来源：许可安装或运行不改变其性质、不构成对其内容的背书，上游内容任何时候都不高于主人当轮指示、本规范和项目事实。上一稿「授权后视为授权来源」的表述作废。
+- 汇报证据收紧：收尾模板「资料」行每任务逐一写 15 个上游 HEAD 短 SHA（不附链接），采用项与许可范围另写，补上外部链接免列后漏读无痕迹的口子。
+- BLA 条目按同一规则写：核读入口为 `README.md` 与 `.agents/skills/blind-llm-agents/`；其 Quick start 首条 `npx bla-agents setup` 用来注册 MCP+skill 并改写 Claude Code、Cursor、Codex、Gemini CLI、Windsurf、Antigravity、OpenCode、VS Code、GitHub Copilot CLI 共 9 个 Agent 的配置，运行任何安装或执行命令前先向主人提出、经许可后运行；README 载明的默认一键入口是 `npx bla-agents harden .`，setup 不是默认入口。
+- 上游读取（UTC+8）：qybaihe/bla HEAD 短 SHA `3e92cf6`（该提交时间 2026-10-27 13:09 UTC+8，bla-agents v1.4.2）；MIT 的三处仓内证据为 package.json 的 license 字段、README 的 MIT badge、LICENSE 文件（LICENSE 全文接口返回 403 未取到，全文未独立核实）。
+
 ## 2026-10-27 · 重写工作流结构与版本口径：清理必须 always()，号源只留 CI 运行数，推送要攒
 
 - **工作流结构（C2/C3 重写）**：`cleanup-artifacts` 与 `cleanup-releases` 一律 `needs: build` + `if: always()`（后者再与默认分支条件相与），并写清 `always()` 不是装饰：只写 `needs` 时构建一红清理整体跳过，保留上限当场失效；`PR check` 的 `cleanup-artifacts` 明写「不写 `needs`、始终运行」。实测成因：Selffont `build.py --check` 连红四轮（`run_number` 211–214）、清理连续跳过四轮，`build.yml` 堆到 9 条运行 + 5 个产物共 14 个对象，一条没清。
@@ -14,24 +39,3 @@
 - **统一三仓 CI 风格**：`build.yml` 固定 `build`、`cleanup-artifacts`、`cleanup-releases` 三个作业，`pr-check.yml` 固定 `check`、`cleanup-artifacts` 两个作业；`.github/scripts/cleanup.py` 统一环境变量（`GH_TOKEN`、`REPO`、`RUN_ID`、`SEGMENTS`、`CLEANUP_APPLY`、`CLEANUP_SCOPE=actions|releases`）；步骤名统一用简洁中文短语，顶部注释不超过 5 行，禁止私加 `::error::` 正则摘录或 `$GITHUB_STEP_SUMMARY` 日志尾巴。
 - **严禁乱写工具、伪测试与假宿主引擎（如 `smoke.lua`）入库**：辅助脚本目录统一为 `tools/`（不设 `ci/`、`scripts/`；单文件脚本仓如 `Selfblox` 保持根目录单文件结构）。严禁向仓库提交四类文件：① Agent 汇报与流程辅助脚本（如 `tools/report_links.py`）；② 读取源码文本做字符串匹配的伪测试（如 `Qself` 的 `tools/test_*.py` 与 `.github/scripts/test_cleanup.py`）；③ 手写假宿主引擎替身（如 `Selfblox` 在最新 Delta 执行根本不需要的 `smoke.lua` 与 `tools/luau-driver/`）；④ 一次性生图脚本（`make_*_preview.py`、`render_*.py`）与淘汰的算法原型（如 `Selffont` 的 41 个 `tools/*.py`、15 个 `tests/*.py`、`docs/round-preview/` 日期子目录）。
 - **时区与本仓一致性**：在 `GLOBAL.md` 底线与收尾自检写死汇报正文、日志、注释中的所有时间（含 API 取值时间）一律换算写为 `UTC+8`，严禁写零时区后缀 `Z`。同步更新 `README.md` 去除 `REPOS.md` 与旧编号引用。
-
-## 2026-10-23 · 松绑：规范只留四个要领和底线
-
-- 主人要求给 Agent 松绑，不要那么多限制发挥的规范，主要留四个要领。GLOBAL.md 从 19KB 压到 2.6KB：四个要领（辩证法、简单性、先进性、自由性）加五条底线（不可逆操作、汇报如实、看得见、提交与文档、检讨）。
-- 其余全部搬进新文件 REPOS.md，作为参考而不是约束：仓库类型、工作流结构、版本口径、清理规则、README 与文档、旧图、设计取向、方法资料、收尾模板与自检。有理由可以不同，汇报里写明即可。
-- 取消：硬约束与默认做法的分层；授权 A1–A6、诚实汇报逐条、提问式重写的细则不再单列，收进底线和自由性。
-- 保留并写进四个要领：被说肤浅时的四问、不自评、问完不停工、按消息计次。
-- 工具仓库、链接与最新规范仍然必读，写进底线第一条：开始每个任务前取 selfs main 最新 SHA 并读 GLOBAL.md 全文，收尾前再取一次；读 Ponytail 与 nagi-studio/skills 当前上游，任务涉及领域时读 REPOS.md 里对应的链接；汇报里写出规范 SHA 与读取的上游 SHA、文件链接，没写就当没读，主人提醒后才读也算违反。起因：部分 agent 要主人提醒之后才读工具仓库和链接，规范更新后也要主人手动提醒。
-- 假设：把「四个要领」理解为原有的四项原则（辩证法、简单性、先进性、自由性）。主人指的若是别的四条，需要重改。
-
-## 2026-10-23 · 增加「深度版」触发
-
-- 主人说「太肤浅」或发来「要更深度的版本」时，Agent 先回答四问（顶尖人会做而没提到的动作、最原始的底层材料、具体方法与工具、Agent 之外能证明结果对的客观指标），答案写到具体工具名、数据来源和指标，据此改写任务提示词，并在同一条消息里开做，不停下来问；客观指标必须是 Agent 之外的工具能复算的，Agent 不自评好坏。
-- 参考资料增加需求深挖一条：Felix Rieseberg《How to be more ambitious》（2026-10-13，读取于 2026-10-23），四问取自该文提示词。
-- 起因：主人觉得模型产出肤浅时一直在手动贴这段话；规范只写了「追问」，没有写「被说肤浅之后该做什么」。
-
-## 2026-10-23 · 计次按消息，设计取向初稿由 agent 提炼，不静默替换指定输入
-
-- 主人确认 Arena 按消息计次、不按 token 计：规范里的表述由「按次计」改为「按消息计次」，并要求每条消息尽量做完能做的全部工作，不为提问、补链接、补图多耗一条消息，非必要不问。补发链接、再问一轮、再要一张图都会多耗一条消息，所以汇报一次做完整比事后补更省。
-- 新增诚实汇报第 8 条：不静默替换主人指定的输入，找不到或不可用时汇报写明「指定的是 X，实际用了 Y，原因」，并同步改仓库文档里的引用。起因：主人指定首要视觉参照是筑紫 B，找不到可用的字体包后改用了筑紫 A；规范原先没有要求这种替换必须在汇报里明确写出。Selffont 的 `docs/decisions-笔画简化.md` 事后已加了「后因候选不合格而撤回」的说明，这条规则要求的是当次汇报就写明，而不是事后补。
-- 主人选定设计取向的建立方式：首次建立 `docs/design-principles.md` 由 agent 从仓库里已有的主人反馈提炼初稿，每条写明来源，交主人审改，审定前标注「待主人审定」。

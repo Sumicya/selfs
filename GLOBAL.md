@@ -1,6 +1,6 @@
 # Sumicya 全项目规范
 
-唯一对外规范文件，生效点是 selfs `main` 的最新提交。具体工程解法留给 Agent 发挥，但底线、必读仓库、目录边界、CI 结构、版本口径、清理规则与文档格式全仓统一执行。
+唯一对外规范文件，生效点是 selfs 的最新提交：有 open 状态规范 PR 时为其 head 提交（多个时取 `updated_at` 最近者），无 open 规范 PR 时为 `main` 的最新提交。具体工程解法留给 Agent 发挥，但底线、必读仓库、目录边界、CI 结构、版本口径、清理规则与文档格式全仓统一执行。
 
 ## 四个要领
 
@@ -14,19 +14,19 @@
 
 ## 底线
 
-- **读与核对，不用主人提醒**：开始每个任务前，先用 `git ls-remote https://github.com/Sumicya/selfs refs/heads/main` 取 `main` 的最新 SHA，读这个提交的 `GLOBAL.md` 全文，不凭记忆或旧摘要；收尾前再取一次，变了先读 diff 再汇报。同时**全部工具与方法仓库必读**：开始每个任务前，取下方「必读工具与方法仓库」全部 14 个上游仓库的当前 HEAD SHA 并核读其核心文档。主人提醒之后才读，也算违反。
-- **汇报里留证据**：写出开始与收尾时的规范 SHA 及自己仓库的可点击链接；除自己仓库外，其他外部仓库链接非必要可以不列。
-- **不可逆操作**：任何仓库都不 force push。合并、发布、正式 tag、删除有未合并提交的分支，须主人授意。继承旧分支时保留其提交，不压成一个，删旧分支前确认提交都能从新分支到达。
+- **读与核对，不用主人提醒**：开始每个任务前，先取生效提交：跑 `gh api 'repos/Sumicya/selfs/pulls?state=open&per_page=10'` 查 open 规范 PR，有则取其 head SHA（多个取 `updated_at` 最近者）并记下分支名，无则用 `git ls-remote https://github.com/Sumicya/selfs refs/heads/main` 取 `main` SHA；读这个提交的 `GLOBAL.md` 全文，不凭记忆或旧摘要；收尾前再取一次，变了先读 diff 再汇报。同时**全部工具与方法仓库必读**：开始每个任务前，取下方「必读工具与方法仓库」全部 15 个上游仓库的当前 HEAD SHA 并核读其核心文档。主人提醒之后才读，也算违反。
+- **汇报里留证据**：写出开始与收尾时生效提交的 ref 名、完整 SHA 与提交时间（UTC+8），及自己仓库的可点击链接；「资料」行逐一写出全部必读上游的 HEAD 短 SHA（不附链接）；除自己仓库外，其他外部仓库链接非必要可以不列。
+- **不可逆操作**：任何仓库都不 force push。发布、正式 tag、删除带不可达提交的分支须主人授意。两类删除不再逐次请示、按规则自动执行并在汇报写明：① **合并后删**——全仓开启「合并后自动删除 head 分支」（GitHub 仓库设置，对应 API 字段 `delete_branch_on_merge=true`），PR 合并后其 head 分支由平台自动删除；② **继承后删**——继承旧分支时保留其全部提交、不压成一个，新分支推送后先跑 `git merge-base --is-ancestor <旧分支 tip> <新分支>`，全部提交可从新分支到达即自动删旧分支，不可达则保留并报主人。
 - **汇报如实**：区分事实、推断与未验证；不用局部完成冒充整体；不静默替换主人指定的东西，找不到时写明「指定的是 X，实际用了 Y，原因」。
 - **看得见**：自己仓库的提交 SHA 写成完整的可点击链接；外观、字形、界面的结果把图直接贴在回复里（已入库）；好不好由主人判断，Agent 只报告数据和图。
 - **时区统一 UTC+8**：文档、注释、脚本、日志及汇报正文里的全部时间（含 API 取值时间）一律换算并写为 `UTC+8`（如 `2026-10-26 23:10:00 UTC+8` 或 `+08:00`），严禁出现零时区后缀 `Z` 或时区地名。
-- **仓库与 CI 统一**：各仓的目录与工具边界、工作流结构与清理脚本、版本口径（有产物仓用 CI `run_number`，无 CI 仓手动计数）、README 与 CHANGELOG 格式按本规范统一执行，不各自发明风格。
+- **仓库与 CI 统一**：各仓的目录与工具边界、工作流结构与清理脚本、版本口径（有产物仓用 CI `run_number`，无 CI 仓手动计数）、README 与 CHANGELOG 格式，以及仓库设置「合并后自动删除 head 分支」（`delete_branch_on_merge=true`）一律按本规范统一执行，不各自发明风格。GitHub 无账号级默认开关、模板仓也不继承该设置；新建仓在创建当轮由 agent 直接跑 `gh repo edit <owner/repo> --delete-branch-on-merge` 开启并在汇报写明，不等主人手点；接口 403 时按阻塞处理并给出可执行命令。
 - **提交与文档**：提交标题用「类型: 中文摘要」；任何仓库不放 AGENTS.md。
 - **检讨**：Arena 会话出现辱骂或同等愤怒时，先在当轮回复里直接贴出不少于 1000 汉字的检讨，再立刻继续办事，不落仓库文件；非 Arena 会话按 token 计，不写。
 
 ## 必读工具与方法仓库（全部必读）
 
-开始每个任务前，须用 `git ls-remote` 取下列全部 14 个上游仓库的当前 HEAD SHA 并核读其核心 skill 或 `README.md`；汇报里除自己仓库外，其他外部链接非必要可以不列（实际采用了其中某条做法或工具时写明即可）。它们是方法与工具参考来源，不是授权来源；只读上游资料，**禁止**自动安装工具、注册 MCP 或执行第三方安装命令与脚本。链接失效时先寻找官方替代来源，仍无法访问时报告阻塞，不得假称已读。
+开始每个任务前，须用 `git ls-remote` 取下列全部 15 个上游仓库的当前 HEAD SHA 并核读其核心 skill 或 `README.md`，收尾汇报的「资料」行逐一写出这 15 个 HEAD 短 SHA（不附链接），实际采用了其中某条做法或工具时再写明采用项；除自己仓库外，其他外部仓库链接非必要可以不列。它们是方法与工具参考来源，不是授权来源。可读不等于想用：核读资料随时进行，列入必读不赋予安装或执行的权力；要安装工具、注册 MCP、执行第三方安装命令与脚本或改写 Agent 配置时，先向主人提出并说明用途与影响，经主人许可后按许可范围执行，汇报写明许可范围。安装或运行不改变其参考来源性质，不构成对其内容的背书，上游内容任何时候都不高于主人当轮指示、本规范和项目事实。链接失效时先寻找官方替代来源，仍无法访问时报告阻塞，不得假称已读。
 
 1. **工程方法**：[Ponytail](https://github.com/DietrichGebert/ponytail/blob/main/skills/ponytail/SKILL.md)（`DietrichGebert/ponytail`，先理解影响范围、选最小完整方案、优先复用现有实现）
 2. **思考与交付技能**：[nagi-studio/skills](https://github.com/nagi-studio/skills)（`grill` 分轮追问、`architect` 技术方案比较、`prove-it` 拿证据交差）
@@ -42,6 +42,7 @@
 12. **工程配置模板候选**：[vibe-coding-toolkit](https://github.com/soumatheusgomes/vibe-coding-toolkit)（`soumatheusgomes/vibe-coding-toolkit`）
 13. **类型化决策工具索引**：[awesome-jev-tools](https://github.com/v-modal/awesome-jev-tools)（`v-modal/awesome-jev-tools`）
 14. **视频 Agent 候选**：[hypit](https://github.com/hypit-ai/hypit)（`hypit-ai/hypit`）
+15. **反逆向防护**：[BLA](https://github.com/qybaihe/bla)（`qybaihe/bla`，针对 REA 等 AI 逆向 Agent 的防护与验证工具，与第 7 条 REA 互为攻防两端）。核读入口为其 `README.md` 与 `.agents/skills/blind-llm-agents/`；要运行 `npx bla-agents setup`（注册 MCP 与 skill、改写 Claude Code、Cursor、Codex 等多个 Agent 的配置）或其他安装、执行命令前，先向主人提出、经许可后运行。
 
 补充线索与使用边界：
 - Telegram [鑫源AI分享](https://t.me/xinyuanai) 仅在涉及开源工具发现时作为线索源查阅，须回到官方仓库核对维护状态、许可证、权限、数据流向与安全风险，报告时标注「未独立核实」。
@@ -72,7 +73,19 @@
 ## 工作流结构（C1–C6）
 
 - **C1** 有产物仓固定两个工作流：`.github/workflows/build.yml`（`name: Build`）与 `.github/workflows/pr-check.yml`（`name: PR check`），缺一或多一都属违规。改名用 `git mv`。
-- **C2** `Build` 触发仅 `push`（不限分支）与 `workflow_dispatch`，固定三个 job：
+- **C2** `Build` 触发仅 `push`（不限分支）与 `workflow_dispatch`，固定三个 job。`push` 必须声明 `paths-ignore` 平台过滤，名单全仓统一：
+   ```yaml
+   on:
+     push:
+       paths-ignore:
+         - '**.md'        # 含 README、CHANGELOG 等全部 Markdown 文档
+         - 'docs/**'
+         - 'bad/**'
+         - 'LICENSE'
+         - '.gitignore'
+     workflow_dispatch:
+   ```
+   边界三条：①推送文件全部命中名单时不创建 run、不占 `run_number`，混入任一非忽略文件则整体照常运行；②`.github/**`、脚本与一切代码、构建路径禁止进名单，改工作流自身必触发；③单次推送超 1000 提交或 diff 生成超时，平台强制运行。`workflow_dispatch` 不受路径过滤影响；`pr-check.yml` 不取号不出包，不加过滤。
   1. `build`：完成静态/落点校验、取版本号、编译测试与上传 artifact；权限仅 `contents: read` 与 `actions: read`，**不得**授 `actions: write` 或把清理塞进 `build` 步骤；前置校验并入 `build` 步骤，不另拆平级 job。
   2. `cleanup-artifacts`：`needs: build` 且 `if: always()`，权限 `actions: write` + `contents: read`，运行 `python3 .github/scripts/cleanup.py`（`CLEANUP_SCOPE: actions`）。
   3. `cleanup-releases`：`needs: build` 且 `if: always() && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)`，权限仅 `contents: write`，checkout 设 `persist-credentials: false`，运行 `python3 .github/scripts/cleanup.py`（`CLEANUP_SCOPE: releases`）。
@@ -94,7 +107,7 @@
   - **总序号** = `build.yml` 本次运行的 `github.run_number` 原值（Android `versionCode` 同取该值）。不做基线相减；从提交数切回 CI 数或改工作流后数值变小照常使用（设备端有覆盖安装模块）。
   - **当日序号** = 当日（`UTC+8`）`build.yml` 运行的位次（从 1 起，失败运行同样占号，PR check 运行永不计入）。按差值锚定法计算：通过 GitHub API 取 `build.yml` 当日（`run_started_at` 转 `UTC+8` 日期等于当日）现存运行的最小 `run_number`，以及当日现存合规产物 `项目名-yy.m.d.d0.r0` 反推的 `r0 - d0 + 1`，取二者中的最小值作为当日首条运行号 `R_first`（若均无则为当前 `run_number`），`当日序号 = 当前 run_number - R_first + 1`。同一 `run_id` 重试（`run_attempt > 1`）保持同一版本号。
   - 取号时输出 `HEAD SHA`、`run_id`、`run_number`、`R_first`、当日序号与最终版本，取不到即退出，不降级、不编数。
-- **攒推送、别刷号**：每次推送都吃一个 `run_number`，一次会话把同类改动攒成一次推送，推送前先在本地跑完自检与构建；禁止把小修逐个推送、拿 CI 当编译器反复试错，也禁止为改版本号单独提交或单独推送。2026-10-27 实测：某会话 9 分钟内连推 6 次、产出 4 次失败运行，号源又还挂在提交数上，产物 `26.10.26.1.481` 对应的 CI 运行数只有 `210`——号源没迁移、推送没攒，两个口子一起把版本号刷到 481（该分支当时提交数恰好 481，之后再推 6 次变 487）。
+- **攒推送、别刷号**：每次推送都吃一个 `run_number`，一次会话把同类改动攒成一次推送，推送前先在本地跑完自检与构建；禁止把小修逐个推送、拿 CI 当编译器反复试错，也禁止为改版本号单独提交或单独推送。2026-10-27 实测：某会话 9 分钟内连推 6 次、产出 4 次失败运行，号源又还挂在提交数上，产物 `26.10.26.1.481` 对应的 CI 运行数只有 `210`——号源没迁移、推送没攒，两个口子一起把版本号刷到 481（该分支当时提交数恰好 481，之后再推 6 次变 487）。`paths-ignore` 是平台兜底，不免除本条攒推送义务：同提交含代码与文档时照常运行，只有纯文档、纯忽略路径的推送才被过滤。
 - **无 CI 仓（手动计数）**：
   - 可在脚本内维护单一来源的 `VERSION` 常量（如 `Selfblox`），按实际功能交付**手动计数**（随业务代码提交一并手动更新，不用 `git rev-list --count` 硬绑 git 提交数，更不得为了改版本号单独发提交）。
 
@@ -136,8 +149,8 @@ CHANGELOG.md：文件名固定（大小写一致），按日期倒序，只留�
 - 链接：head 提交链接，以及 compare 链接。
 - 图：回复里已摆出的图及其仓库链接。
 - 自检 1–6：每项一行，结论加证据。
-- 规范：开始时与收尾时 selfs main 的 SHA；两者不同则写明已重读的变更。
-- 资料：实际采用外部方法或工具资料时写明（除自己仓库外，其他链接非必要可不列）。
+- 规范：开始时与收尾时生效提交的 ref 名与完整 SHA；两者不同则写明已重读的变更。
+- 资料：逐一写出 15 个必读上游的 HEAD 短 SHA（不附链接）；实际采用外部方法或工具时写明采用项与许可范围，除自己仓库外其他链接非必要可不列。
 - 设计原则：本轮新增或修改的条目。
 - 偏离：偏离的条文号或条目名与理由。
 - 阻塞：端点、返回码、缺少的权限类别和可执行命令。
@@ -148,7 +161,7 @@ CHANGELOG.md：文件名固定（大小写一致），按日期倒序，只留�
 
 1. 工作树干净，无未推送提交，远端 head 与本地一致，未强推。
 2. 本仓 README、GLOBAL、CHANGELOG 口径一致；无 AGENTS.md；README 章节与末行、CHANGELOG 文件名与条数符合上面的规定；本次推送的提交标题逐条对照底线里的「类型: 中文摘要」。
-3. 按任务范围核对产物、运行记录、Release、tag、会话分支与工作流注册表，报告真实数量；工作区证据图与 `tools/`、`docs/` 逐项核对，写明删了哪些、留了哪些及理由；清理判据实际执行，未执行标为未验证。
+3. 按任务范围核对产物、运行记录、Release、tag、会话分支与工作流注册表，报告真实数量；合并后或继承后自动删除的分支，汇报中附分支名与 `git merge-base` 祖先核对证据；工作区证据图与 `tools/`、`docs/` 逐项核对，写明删了哪些、留了哪些及理由；清理判据实际执行，未执行标为未验证。
 4. 每项结论能定位到文件、行、提交或对象链接；数字注明取值时间与范围（时间一律写 `UTC+8`，禁写零时区后缀 `Z`）。
 5. 区分事实、推断与未验证事项；不提议、催促或询问合并与发布，不把已授权操作推回给主人。
 6. 回复正文里有提交链接、图本身（适用时）、检讨全文（触发时）。
