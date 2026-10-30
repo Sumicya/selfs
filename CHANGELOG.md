@@ -3,7 +3,7 @@
 - **统一口径**：各仓 `LICENSE` 统一为 GPL-3.0 全文（与 Qself 同源，35149 字节），本仓当日补齐 `LICENSE` 与 README「许可证」章；GLOBAL 底线新增「许可证统一」，规范仓 README 的用途章节由（使用、修改）改为（使用、修改、许可证）。
 - **明确不自造许可证**：上游归属与「为什么用 GPL」写进 `NOTICE` 或 README「许可证」章，不写进 `LICENSE`。事实依据：Gself 现有 `LICENSE` 是 569 字节自述文本，`gh api users/Sumicya/repos` 对它的识别结果是 `NOASSERTION`，SPDX、Dependabot 与打包工具都读不到；Qself 用全文则被识别为 `GPL-3.0`。
 - **两处例外写进条文**：① 合并 GPL 兼容上游的仓必须 GPL-3（Gself 并入 `chenyue404/GboardHook`，GPL-3.0）；② 字体仓 Selffont 在主人指定前不套用 GPL-3，字体被嵌入文档或软件时会被判为衍生，需 OFL-1.1 或 GPL-3 加 font exception。
-- **其余仓现状（2026-10-30 20:2x UTC+8）**：Qself 已有 GPL-3.0 全文；Gself 为自写短文本，待换成全文并把归属移入 `NOTICE`；selfs 本轮已补；Selffont、Selfblox、apk 无 `LICENSE`，按新条在各自仓库当轮补，本会话不跨仓推送。
+- **其余仓现状（2026-10-30 20:17–20:19 UTC+8 取值）**：Qself 已有 GPL-3.0 全文；Gself 为自写短文本，待换成全文并把归属移入 `NOTICE`；selfs 本轮已补；Selffont、Selfblox、apk 无 `LICENSE`，按新条在各自仓库当轮补，本会话不跨仓推送。
 - **起因（UTC+8）**：主人问「统一用 GPL-3 行不行，不行就自己做许可证」；核完事实后结论是统一 GPL-3 可行且已有先例（Qself），自造许可是唯一应排除的选项。
 
 ## 2026-10-30 · 新增「表达与信息」并按 5 级拷打重写：必读增至 17 个，许可与核读证据立口径
