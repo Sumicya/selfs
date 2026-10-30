@@ -4,6 +4,8 @@
 - **明确不自造许可证**：上游归属与「为什么用 GPL」写进 `NOTICE` 或 README「许可证」章，不写进 `LICENSE`。事实依据：Gself 现有 `LICENSE` 是 569 字节自述文本，`gh api users/Sumicya/repos` 对它的识别结果是 `NOASSERTION`，SPDX、Dependabot 与打包工具都读不到；Qself 用全文则被识别为 `GPL-3.0`。
 - **两处例外写进条文**：① 合并 GPL 兼容上游的仓必须 GPL-3（Gself 并入 `chenyue404/GboardHook`，GPL-3.0）；② 字体仓 Selffont 在主人指定前不套用 GPL-3，字体被嵌入文档或软件时会被判为衍生，需 OFL-1.1 或 GPL-3 加 font exception。
 - **其余仓现状（2026-10-30 20:17–20:19 UTC+8 取值）**：Qself 已有 GPL-3.0 全文；Gself 为自写短文本，待换成全文并把归属移入 `NOTICE`；selfs 本轮已补；Selffont、Selfblox、apk 无 `LICENSE`，按新条在各自仓库当轮补，本会话不跨仓推送。
+- **GPL-3 逐条落地**：新增「许可证执行（GPL-3）」章节，按条号写清可执行义务——§4 随附全文、§5 改动标注与日期、§5(d) 关于页／`--version` 显示版权与担保声明、§6(d) 同页给可构建的对应源码、§6 安装信息（锁死的 User Product 上分发须给安装方法，否则按源码分发，Selfblox／Gself／apk 涉及）、§7 只允许 (a)–(f) 类附加条款且写明 additional permission、§10 禁止「仅供学习交流」「禁止商用」这类叠加限制、§11 不另写专利条款、上游兼容（GPL-2.0-only 不可并入 GPL-3）。条款号与原文均对应当前 `LICENSE` 文件（GPL-3.0，2007-06-29）。
+- **Selffont 字体仓分工（默认项，待主人定）**：字体与字形源文件用 OFL-1.1，构建脚本与生成器用 GPL-3.0，仓根同放 `LICENSE` 与 `OFL.txt`；不对同一份字体做 GPL-3 与 OFL 双许可——OFL-1.1 条件 5 原文为「must be distributed entirely under this license, and must not be distributed under any other license」，条件 1 又禁止单独售卖字体本身，与 GPL-3 §10 允许下游商业分发相冲。备选为 GPL-3 加字体例外（§7 additional permission）。
 - **起因（UTC+8）**：主人问「统一用 GPL-3 行不行，不行就自己做许可证」；核完事实后结论是统一 GPL-3 可行且已有先例（Qself），自造许可是唯一应排除的选项。
 
 ## 2026-10-30 · 新增「表达与信息」并按 5 级拷打重写：必读增至 17 个，许可与核读证据立口径

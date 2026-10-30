@@ -20,6 +20,6 @@
 
 ## 许可证
 
-本仓采用 GNU General Public License v3.0（GPL-3.0），全文见 [LICENSE](LICENSE)，与 Qself 同源。引用、转载或改写本规范条文须遵守该许可；各项目仓库保留自己的 LICENSE，不因引用本规范而改变。
+本仓采用 GNU General Public License v3.0（GPL-3.0），全文见 [LICENSE](LICENSE)，与 Qself 同源。引用、转载或改写本规范条文须遵守该许可；各项目仓库保留自己的 LICENSE，不因引用本规范而改变。GPL-3 的逐条执行义务（对应源码、安装信息、附加条款、字体仓分工）见 [GLOBAL.md](GLOBAL.md)「许可证执行（GPL-3）」。
 
 规范指针：[GLOBAL.md](GLOBAL.md)（以 selfs `main` 最新提交为准）
