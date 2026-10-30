@@ -1,5 +1,14 @@
 # 变更记录历史（已移出主 CHANGELOG，不对外展示）
 
+## 2026-10-27 · 重写工作流结构与版本口径：清理必须 always()，号源只留 CI 运行数，推送要攒
+
+- **工作流结构（C2/C3 重写）**：`cleanup-artifacts` 与 `cleanup-releases` 一律 `needs: build` + `if: always()`（后者再与默认分支条件相与），并写清 `always()` 不是装饰：只写 `needs` 时构建一红清理整体跳过，保留上限当场失效；`PR check` 的 `cleanup-artifacts` 明写「不写 `needs`、始终运行」。实测成因：Selffont `build.py --check` 连红四轮（`run_number` 211–214）、清理连续跳过四轮，`build.yml` 堆到 9 条运行 + 5 个产物共 14 个对象，一条没清。
+- **版本口径（重写）**：开头立「号源只有一处」——只由 CI 运行数产生，禁止提交数、时间戳、手工常量或任何本地计数；并写明「改工作流文件名 / 并发 / PR 运行不让号回头留洞」由 `run_number` 与差值锚定自己保证，不靠换号源解决。旧口径的相反表述已在 2026-10-26 条目统一，正文无残留。
+- **新增「攒推送、别刷号」**：每次推送吃一个 `run_number`，一次会话把同类改动攒成一次推送、推送前本地跑完自检与构建；禁止逐个推小修、拿 CI 当编译器试错、为改版本号单独提交或推送。
+- **清理规则补口径**：失败／取消／跳过的运行与成功运行一样占号、一样计入 5 条上限；「构建失败所以本轮不清理」被明确写成上限失效的直接成因。
+- **起因（可复算，UTC+8）**：Selffont 号源仍挂在提交数上，产物 `Selffont-26.10.26.1.481` 对应 `run_number=210`，当时分支提交数正好 481、之后 6 次推送变 487；Qself 已在 23:29–23:41 迁移到 `run_number`（产物 `26.10.26.5.347` 对 `run_number=347`）。
+- **未完成**：Selffont 的迁移补丁本地自检通过（`build.py --check` 10 项全过）但未落远端——本会话令牌对该仓只读，`git push` 与删除 artifact 均 HTTP 403。
+
 ## 2026-10-26 · 合回单文件 GLOBAL.md，全部工具仓库必读，版本号改回 CI 运行数，无 CI 仓手动计数
 
 - **合回单文件 GLOBAL.md（删 REPOS.md）且全部 14 个工具与方法仓库必读**：按主人选定 B，将目录边界、CI 结构、版本口径、清理规则、文档与收尾自检全部合回单文件 `GLOBAL.md` 并删除 `REPOS.md`，根治拆成两份文件后 Agent 漏读第二份文件的问题。按主人决定，将 Ponytail、`nagi-studio/skills`、`uv`、`cli/cli`、`reverify`、`ghidra`、`rea`、`dexsql-release`、`monid`、`maskit`、`LoomFlow`、`vibe-coding-toolkit`、`awesome-jev-tools`、`hypit` 共 14 个上游仓库全部设为开工必读；汇报中除自己仓库外，其他外部仓库链接非必要可以不列。

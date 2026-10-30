@@ -18,4 +18,9 @@
 
 历史记录不作为现行规则例外。本仓不维护各项目的实时状态表，也不设置规范检查 CI；核对由 agent 在会话中完成。
 
+
+## 许可证
+
+本仓采用 GNU General Public License v3.0（GPL-3.0），全文见 [LICENSE](LICENSE)，与 Qself 同源。引用、转载或改写本规范条文须遵守该许可；各项目仓库保留自己的 LICENSE，不因引用本规范而改变。
+
 规范指针：[GLOBAL.md](GLOBAL.md)（以 selfs `main` 最新提交为准）

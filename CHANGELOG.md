@@ -1,3 +1,11 @@
+## 2026-10-30 · 全仓许可统一 GPL-3.0，不自造许可文本
+
+- **统一口径**：各仓 `LICENSE` 统一为 GPL-3.0 全文（与 Qself 同源，35149 字节），本仓当日补齐 `LICENSE` 与 README「许可证」章；GLOBAL 底线新增「许可证统一」，规范仓 README 的用途章节由（使用、修改）改为（使用、修改、许可证）。
+- **明确不自造许可证**：上游归属与「为什么用 GPL」写进 `NOTICE` 或 README「许可证」章，不写进 `LICENSE`。事实依据：Gself 现有 `LICENSE` 是 569 字节自述文本，`gh api users/Sumicya/repos` 对它的识别结果是 `NOASSERTION`，SPDX、Dependabot 与打包工具都读不到；Qself 用全文则被识别为 `GPL-3.0`。
+- **两处例外写进条文**：① 合并 GPL 兼容上游的仓必须 GPL-3（Gself 并入 `chenyue404/GboardHook`，GPL-3.0）；② 字体仓 Selffont 在主人指定前不套用 GPL-3，字体被嵌入文档或软件时会被判为衍生，需 OFL-1.1 或 GPL-3 加 font exception。
+- **其余仓现状（2026-10-30 20:2x UTC+8）**：Qself 已有 GPL-3.0 全文；Gself 为自写短文本，待换成全文并把归属移入 `NOTICE`；selfs 本轮已补；Selffont、Selfblox、apk 无 `LICENSE`，按新条在各自仓库当轮补，本会话不跨仓推送。
+- **起因（UTC+8）**：主人问「统一用 GPL-3 行不行，不行就自己做许可证」；核完事实后结论是统一 GPL-3 可行且已有先例（Qself），自造许可是唯一应排除的选项。
+
 ## 2026-10-30 · 新增「表达与信息」并按 5 级拷打重写：必读增至 17 个，许可与核读证据立口径
 
 - **新增二级章节「表达与信息」**（位于 GLOBAL「四个要领」与「底线」之间），把主人 2026-10-30 转来的格赖斯四准则提示词落成条文；初版 7 条，同日按 5 级拷打重写为 5 条：①先交付、后解释；②篇幅由交付物决定，列出可删项（重复、同义对冲、身份与百科开场、无信息结尾）与不可删项（条款、参数、步骤、复现条件、来源、风险、权限边界）；③事实分观测／推断／未知三类标注；④冲突按「事实与边界 > 任务完成 > 篇幅」裁决，条件、否定范围、失败模式与不可逆后果不删，证据块与资料行不因精简省略；⑤交付前三问，已完成即停。
@@ -36,13 +44,4 @@
 - 汇报证据收紧：收尾模板「资料」行每任务逐一写 15 个上游 HEAD 短 SHA（不附链接），采用项与许可范围另写，补上外部链接免列后漏读无痕迹的口子。
 - BLA 条目按同一规则写：核读入口为 `README.md` 与 `.agents/skills/blind-llm-agents/`；其 Quick start 首条 `npx bla-agents setup` 用来注册 MCP+skill 并改写 Claude Code、Cursor、Codex、Gemini CLI、Windsurf、Antigravity、OpenCode、VS Code、GitHub Copilot CLI 共 9 个 Agent 的配置，运行任何安装或执行命令前先向主人提出、经许可后运行；README 载明的默认一键入口是 `npx bla-agents harden .`，setup 不是默认入口。
 - 上游读取（UTC+8）：qybaihe/bla HEAD 短 SHA `3e92cf6`（该提交时间 2026-10-27 13:09 UTC+8，bla-agents v1.4.2）；MIT 的三处仓内证据为 package.json 的 license 字段、README 的 MIT badge、LICENSE 文件（LICENSE 全文接口返回 403 未取到，全文未独立核实）。
-
-## 2026-10-27 · 重写工作流结构与版本口径：清理必须 always()，号源只留 CI 运行数，推送要攒
-
-- **工作流结构（C2/C3 重写）**：`cleanup-artifacts` 与 `cleanup-releases` 一律 `needs: build` + `if: always()`（后者再与默认分支条件相与），并写清 `always()` 不是装饰：只写 `needs` 时构建一红清理整体跳过，保留上限当场失效；`PR check` 的 `cleanup-artifacts` 明写「不写 `needs`、始终运行」。实测成因：Selffont `build.py --check` 连红四轮（`run_number` 211–214）、清理连续跳过四轮，`build.yml` 堆到 9 条运行 + 5 个产物共 14 个对象，一条没清。
-- **版本口径（重写）**：开头立「号源只有一处」——只由 CI 运行数产生，禁止提交数、时间戳、手工常量或任何本地计数；并写明「改工作流文件名 / 并发 / PR 运行不让号回头留洞」由 `run_number` 与差值锚定自己保证，不靠换号源解决。旧口径的相反表述已在 2026-10-26 条目统一，正文无残留。
-- **新增「攒推送、别刷号」**：每次推送吃一个 `run_number`，一次会话把同类改动攒成一次推送、推送前本地跑完自检与构建；禁止逐个推小修、拿 CI 当编译器试错、为改版本号单独提交或推送。
-- **清理规则补口径**：失败／取消／跳过的运行与成功运行一样占号、一样计入 5 条上限；「构建失败所以本轮不清理」被明确写成上限失效的直接成因。
-- **起因（可复算，UTC+8）**：Selffont 号源仍挂在提交数上，产物 `Selffont-26.10.26.1.481` 对应 `run_number=210`，当时分支提交数正好 481、之后 6 次推送变 487；Qself 已在 23:29–23:41 迁移到 `run_number`（产物 `26.10.26.5.347` 对 `run_number=347`）。
-- **未完成**：Selffont 的迁移补丁本地自检通过（`build.py --check` 10 项全过）但未落远端——本会话令牌对该仓只读，`git push` 与删除 artifact 均 HTTP 403。
 
