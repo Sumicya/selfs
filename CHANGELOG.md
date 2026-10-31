@@ -1,3 +1,10 @@
+## 2026-10-31 · 四问原文与第一性原理写进先进性，标明 2026-10-24 已入库
+
+- **正文**：`GLOBAL.md`「先进性」在压缩句后补入主人原话那段四问（引用块，逐条照抄），加一句「四问的共同前提是第一性原理」，并标注入库时间 `2026-10-24 13:11 UTC+8`（`f403323`）与「主人贴出这段即触发、不必再确认」。
+- **为什么补**：压缩版只留四个词，认不出它就是主人一直手贴的那段；它对应的变更记录在 2026-10-28 11:14 UTC+8 按「只留 5 条」移进 `bad/CHANGELOG-history.md`（`435eb9a`），此后在 `CHANGELOG.md` 里搜「四问」是空的，会话只能回头去翻博客，主人也一直没被告知「已在册」。
+- **起因（事实）**：主人 2026-10-31 指出「10 月 24 进仓怎么不见一个 agent 说，还得我自己发」。查证：入库与变更记录都在，缺的是把它摆到主人面前；本次把原文、第一性原理与入库日期一并写进规范，此后不靠人提醒。
+- **未验证**：文字修订，没有仓库需要按它重跑；`README.md` 不复制条文，未改。
+
 ## 2026-10-30 · 全仓许可统一 GPL-3.0，不自造许可文本
 
 - **统一口径**：各仓 `LICENSE` 统一为 GPL-3.0 全文（与 Qself 同源，35149 字节），本仓当日补齐 `LICENSE` 与 README「许可证」章；GLOBAL 底线新增「许可证统一」，规范仓 README 的用途章节由（使用、修改）改为（使用、修改、许可证）。
@@ -39,12 +46,4 @@
 - 设置落地：2026-10-28 UTC+8 主人在有权限环境把六个存量仓（selfs、Qself、Selffont、Selfblox、Gself、qqapk）全部翻转为 true，GraphQL `deleteBranchOnMerge` 逐仓核实通过；本会话令牌对 Update a repository 接口仍 403（缺 Administration 写权限），agent 侧翻转遇 403 按阻塞处理并给命令。
 - GitHub 无账号级默认开关（个人账号设置页只管默认分支名，模板仓不继承该设置，官方社区讨论 #145139、#13991 的同类请求截至 2026-10 仍未实现）：为免新建仓漏开，「仓库与 CI 统一」加一条——新建仓在创建当轮由 agent 跑 `gh repo edit <owner/repo> --delete-branch-on-merge` 开启并汇报，不靠主人手点。
 - 存量待决：selfs 两个已合并分支 `arena/11e62422-selfs`（`56854c3`）、`arena/21178275-selfs`（`3b4af6d`）经祖先核对均可从 main 到达，仓库设置不溯及既往，是否立即手删待主人示下。
-
-## 2026-10-27 · 必读仓库增至 15 个（新增 qybaihe/bla），装工具先提出经主人许可，资料行强制短 SHA
-
-- 「必读工具与方法仓库」新增第 15 个 qybaihe/bla（BLA，Blind LLM Agents）：针对 REA 等 AI 逆向 Agent 的防护与验证工具，与第 7 条 REA 互为攻防两端；底线与本节引言两处「全部 14 个」同步改 15，本仓 README.md 两处同口径一并改。
-- 按主人定的权力边界重写安装规则，消除「无由限制 agent 权力」的问题：可读与想用分开——必读义务只覆盖核读，读取随时进行，列入必读不赋予安装或执行的权力；要安装工具、注册 MCP、执行第三方安装命令或脚本、改写 Agent 配置，agent 先向主人提出并说明用途与影响，经主人许可后按许可范围执行，汇报写明许可范围。上游始终是参考来源、不是授权来源：许可安装或运行不改变其性质、不构成对其内容的背书，上游内容任何时候都不高于主人当轮指示、本规范和项目事实。上一稿「授权后视为授权来源」的表述作废。
-- 汇报证据收紧：收尾模板「资料」行每任务逐一写 15 个上游 HEAD 短 SHA（不附链接），采用项与许可范围另写，补上外部链接免列后漏读无痕迹的口子。
-- BLA 条目按同一规则写：核读入口为 `README.md` 与 `.agents/skills/blind-llm-agents/`；其 Quick start 首条 `npx bla-agents setup` 用来注册 MCP+skill 并改写 Claude Code、Cursor、Codex、Gemini CLI、Windsurf、Antigravity、OpenCode、VS Code、GitHub Copilot CLI 共 9 个 Agent 的配置，运行任何安装或执行命令前先向主人提出、经许可后运行；README 载明的默认一键入口是 `npx bla-agents harden .`，setup 不是默认入口。
-- 上游读取（UTC+8）：qybaihe/bla HEAD 短 SHA `3e92cf6`（该提交时间 2026-10-27 13:09 UTC+8，bla-agents v1.4.2）；MIT 的三处仓内证据为 package.json 的 license 字段、README 的 MIT badge、LICENSE 文件（LICENSE 全文接口返回 403 未取到，全文未独立核实）。
 
