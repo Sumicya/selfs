@@ -177,6 +177,7 @@
   2. **源码文本匹配伪测试**：禁止读取业务源码做字符串或正则匹配冒充单元测试，也禁止为 `.github/scripts/cleanup.py` 另配测试文件。单元测试只放项目标准测试目录（如 `app/src/test/`），只测真实行为与纯函数。
   3. **手写假宿主引擎替身**：目标运行环境为真机或专有宿主（如最新 Delta 执行器、Android 真机）时，禁止手写几百行假引擎 Mock（如 `smoke.lua` 及配套 `tools/luau-driver/`）入库自嗨。沙箱内需要做语法/编译检查时，在 `/tmp` 临时运行编译器，工具与脚本不入库；宿主真机行为如实标为「未验证」。
   4. **一次性生图脚本与废弃原型**：如 Pillow 画字脚本 `make_*_preview.py`、`render_*.py`，以及摸索期淘汰的算法原型、网页小工具、额外依赖表（`requirements-research.txt`）。正式逻辑必须收敛进唯一主构建入口（如 `build.py` 或 `app/src/main/`），淘汰原型与一次性脚本在定稿同一提交内删除。
+- **长任务等条件，不等时间**：预计超过 20 秒的命令一律放后台（有进程工具就 `start_process` 拿 pid，没有就 `nohup <cmd> > <log> 2>&1 &` 立刻返回），再用条件等它结束——有工具按 `wait_for=log/exit/port` 等，没工具就下一轮读日志；不许写 `sleep N; tail` 把会话钉住。`sleep` 只允许用于等外部系统且不超过 2 秒。判据：命令里出现 `sleep` 且秒数大于 2，按违规处理。2026-10-31 起因：Selffont 跑 3500 字排序时写 `… & sleep 200; tail -3 /tmp/rank.log`，白占 200 秒，中途被打断结果也一起没了。
 - **文档目录克制**：除 `README.md`、`CHANGELOG.md` 与许可证外，未经主人要求不新建 `TODO.md`、`docs/decisions-*.md`、`docs/design-principles.md`（仅 `Selffont` 维护），不在 `docs/` 下拉日期子目录或堆积过程对账表（csv/tsv/json/txt）。
 
 ### 工作流结构（C1–C6）
