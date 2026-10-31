@@ -1,5 +1,14 @@
 # 变更记录历史（已移出主 CHANGELOG，不对外展示）
 
+## 2026-10-28 · 生效点改最新提交（open 规范 PR head 优先），build.yml 统一 paths-ignore 过滤纯文档推送
+
+- 生效点从「`main` 最新提交」改为「最新提交」：有 open 状态规范 PR 时以其 head 提交为准（多个取 `updated_at` 最近者），无 open PR 才回退 `main`；开工流程改为先 `gh api` 查 open PR、无则 `git ls-remote` 回退，汇报证据改为生效 ref 名+完整 SHA+提交时间（UTC+8）。GLOBAL 四处（生效点定义、开工流程、汇报证据、收尾模板）与 README 三处同口径改写，清除相反表述。
+- C2 加 `paths-ignore` 平台过滤统一名单（`**.md`、`docs/**`、`bad/**`、`LICENSE`、`.gitignore`）：纯文档推送不创建 run、不占 `run_number`，混入任一代码文件即整体照常运行；`.github/**`、脚本与一切代码/构建路径禁止进名单，改工作流自身必触发；超 1000 提交或 diff 超时平台强制运行、`workflow_dispatch` 不受影响、`pr-check.yml` 不加过滤，三条边界写进条文。依据 github/docs 官方 workflow-syntax 与 skip-workflow-runs 原文、cli/cli `lint.yml` 生产实证（仅改 Markdown 的 trunk 提交在带过滤工作流零 run，过滤不留 `run_number` 洞，删 run 才留洞）。
+- 「攒推送、别刷号」戒律保留，明确 `paths-ignore` 是平台兜底、不替代自觉，双轨并行；判断权不留在 agent 手中，不由 agent 自行决定跑不跑 CI。
+- 失败号提案不采纳：总序号维持 `github.run_number` 原值，失败/取消/跳过运行照常占号、照常计入 5 条上限，差值锚定法保留，两仓现行取号实现零改动。
+- 裸奔条文审计 20 条的处置：禁刷 CI 与禁为版本号单独推送 2 条随 `paths-ignore` 平台收口；force push 禁令的分支保护开关受令牌 403 阻塞，只给手动命令、不自研检查；其余 17 条维持方法级原文；不设条文强制级标注、不新增规范检查器。
+- 起因（UTC+8）：Qself 会话分支纯规范类推送连占 build `run_number` 351–355（含 1 次失败运行），戒律无机制拦截；同轮 Gself `cleanup.py` 前缀写死 `Qself-` 导致首个新口径产物被清理 job 删除的事故已修复（前缀改由 REPO 推导，#58 产物存活且 join 对齐）。
+
 ## 2026-10-27 · 分支收口自动化：合并后自动删 head 分支，继承确认可达即自动删旧分支
 
 - 主人定的分支收口规则，替代此前删分支逐次授意：① 全部 Sumicya 仓库开启 GitHub 设置「Automatically delete head branches」（API 字段 `delete_branch_on_merge=true`），PR 合并后 head 分支由平台自动删除；② 继承旧分支时仍保留全部提交、不压成一个，新分支推送后跑 `git merge-base --is-ancestor <旧分支 tip> <新分支>`，全部提交可达即自动删旧分支，不可达则保留并报主人。发布、正式 tag、删除带不可达提交的分支仍须主人授意，force push 仍全禁。
