@@ -269,6 +269,18 @@ CHANGELOG.md：文件名固定（大小写一致），按日期倒序，只留�
 
 每条原则必须是可判定的：对比母版的哪一处、量哪个间距、看哪张图；写不出判据的标「待补判据」，不算已记录。视觉与字体仓必须有热重载／热切换的预览路径（改一次不必全量构建），没有就把它当本轮首要交付；预览路径算交付物，不算过程。主人评价观感、粗细、比例、风格的仓（目前 Selffont），维护 `docs/design-principles.md`，记的是主人的取向，筑紫等外部参照的客观事实另放参照文档。主人每给一次这类反馈，同一轮里提炼成一句话原则写进去，附日期和反馈的关键词，不贴整段；与旧条冲突时改写旧条，不堆叠，只留当前有效的，被替代的删除（历史在 git）。每次做设计决策、开始新一批字形或界面前先读它，按它判断，出图时对照它。首次建立该文件时，由 agent 从仓库里已有的主人反馈（提交说明、TODO、变更记录和设计文档里「主人……」的记录）提炼初稿，每条写明来源，交主人审改；主人审定前，文件顶部标注「待主人审定」。
 
+### 应用图标
+
+**适用**：有 APK 的仓（Qself、Gself）。Magisk／KernelSU 模块仓（Selffont、Selfblox）没有 launcher 图标，不适用；管理器若显示模块卡图标，可放 `webroot/icon.png`（512×512、透明底），非强制。
+
+- **必须自适应**：`res/mipmap-anydpi-v26/ic_launcher.xml` 与 `ic_launcher_round.xml` 各一份，含 `<background>`、`<foreground>`、`<monochrome>` 三层；manifest 用 `@mipmap/ic_launcher` 并加 `roundIcon`。`minSdk ≥ 26` 时不得只给单张 `drawable/` 图。2026-10-31 起因：Qself 的 APK 里只有 `res/drawable/icon.xml` 一张 796 B 的普通矢量，没有自适应层，桌面按 mask 裁切时方形硬边。
+- **前景进安全区**：图形限制在 108 画布中心 66dp 直径内（用 `<group>` 缩放），四角不得放必须可见的内容——圆、方、水滴三种 mask 都会裁。
+- **monochrome 必须是单色**：独立 `ic_launcher_monochrome.xml`，只用 `#FFFFFF` 与透明背景，不复用带底色的整图；monochrome 直接指向一份全白前景也算合规。
+- **矢量，不嵌位图**：图标用 vector drawable；商店宣传大图另存，不进 APK。
+- **不自己换图标**：不在运行时切图标或按壁纸着色；主题图标由系统完成，app 侧只提供 monochrome。
+- **不拿主题图标当卖点**：系统是否重绘由桌面决定。2026-10-31 实测 ColorOS（SDK 36）`settings list secure` 无任何图标重绘键、`cmd overlay list` 无图标 overlay、桌面设置里没有「图标重绘／莫奈图标」开关，第三方 monochrome 装了也不变色——写 monochrome 只是兼容准备，不得据此承诺「图标跟随主题色」。
+- **验收**：仓内 `ls app/src/main/res/mipmap-anydpi-v26/` 两份齐；`grep -c "<monochrome" …/ic_launcher.xml` = 1；装机后 `unzip -l "$(pm path <包名> | sed 's/package://')" | grep -c mipmap-anydpi-v26` = 2。
+
 ## 八、许可证执行（GPL-3）
 
 `LICENSE` 是全文本，以下义务逐条落地，不靠口头声明。条号对应当前 `LICENSE` 文件（GPL-3.0，2007-06-29）。
