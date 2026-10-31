@@ -1,3 +1,10 @@
+## 2026-10-31 · 内联图改走 jsDelivr：raw.githubusercontent.com 在主人网络上打不开
+
+- **触发（事实）**：Selffont 汇报用 `raw.githubusercontent.com` 内联证据图，主人看不到（显示为破图）；同轮实测该主机在手机上返回 000。
+- **改动**：底线「看得见」补一条图床规则——内联一律 `https://cdn.jsdelivr.net/gh/<owner>/<repo>@<commit>/<path>`，按 commit 定版；`github.com/.../raw/...`（302）与 `cdn.statically.io`（301）仅作备选。
+- **验收**：图在主人回复里能看见即算；换主机前先给 `curl -s -o /dev/null -w '%{http_code}'` 自测命令。
+- **依据**：`https://cdn.jsdelivr.net/gh/Sumicya/Selffont@489258e5/docs/evidence/2026-10-31-metrics-12-16-24.png` 主人 2026-10-31 确认可显示。
+
 ## 2026-10-31 · CHANGELOG 不再分文件：历史并回正文；补「不准私自开 PR」
 
 - **触发（事实）**：主人指出 `bad/CHANGELOG-history.md` 在公开仓里一样看得见，另开文件没有隐藏作用；同轮还重申「不准私自开 PR」。
