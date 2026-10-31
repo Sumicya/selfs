@@ -1,5 +1,13 @@
 # 变更记录历史（已移出主 CHANGELOG，不对外展示）
 
+## 2026-10-27 · 分支收口自动化：合并后自动删 head 分支，继承确认可达即自动删旧分支
+
+- 主人定的分支收口规则，替代此前删分支逐次授意：① 全部 Sumicya 仓库开启 GitHub 设置「Automatically delete head branches」（API 字段 `delete_branch_on_merge=true`），PR 合并后 head 分支由平台自动删除；② 继承旧分支时仍保留全部提交、不压成一个，新分支推送后跑 `git merge-base --is-ancestor <旧分支 tip> <新分支>`，全部提交可达即自动删旧分支，不可达则保留并报主人。发布、正式 tag、删除带不可达提交的分支仍须主人授意，force push 仍全禁。
+- 同步三处条文：底线「不可逆操作」写明两类自动删除及其边界；「仓库与 CI 统一」把该仓库设置列为全仓统一项；收尾自检第 3 项要求汇报自动删除的分支名与祖先核对证据。
+- 设置落地：2026-10-28 UTC+8 主人在有权限环境把六个存量仓（selfs、Qself、Selffont、Selfblox、Gself、qqapk）全部翻转为 true，GraphQL `deleteBranchOnMerge` 逐仓核实通过；本会话令牌对 Update a repository 接口仍 403（缺 Administration 写权限），agent 侧翻转遇 403 按阻塞处理并给命令。
+- GitHub 无账号级默认开关（个人账号设置页只管默认分支名，模板仓不继承该设置，官方社区讨论 #145139、#13991 的同类请求截至 2026-10 仍未实现）：为免新建仓漏开，「仓库与 CI 统一」加一条——新建仓在创建当轮由 agent 跑 `gh repo edit <owner/repo> --delete-branch-on-merge` 开启并汇报，不靠主人手点。
+- 存量待决：selfs 两个已合并分支 `arena/11e62422-selfs`（`56854c3`）、`arena/21178275-selfs`（`3b4af6d`）经祖先核对均可从 main 到达，仓库设置不溯及既往，是否立即手删待主人示下。
+
 ## 2026-10-27 · 必读仓库增至 15 个（新增 qybaihe/bla），装工具先提出经主人许可，资料行强制短 SHA
 
 - 「必读工具与方法仓库」新增第 15 个 qybaihe/bla（BLA，Blind LLM Agents）：针对 REA 等 AI 逆向 Agent 的防护与验证工具，与第 7 条 REA 互为攻防两端；底线与本节引言两处「全部 14 个」同步改 15，本仓 README.md 两处同口径一并改。
