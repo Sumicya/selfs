@@ -1,3 +1,10 @@
+## 2026-11-02 · 规范补两句：包只从一个地方下，文档对不上先修文档
+
+- **触发**：主人「我都不知道在哪找可以刷的包」「私自编工作流程」。Selffont 的 README 第 36 行写「Release 只放最新一版的 zip，别从 artifact 下」，而 Releases 里只有探针字体 `probe-dev-1`，字体包 0 个，用户只能退回 5 天过期的 artifact。
+- **六·产物**：补「包只从一个地方下：那处写进 README，写完点开核对，打得开才算」。验收：`gh api repos/<owner>/<repo>/releases --jq 'length'` 与 README 写的出口是同一处。
+- **七·文档**：补「对不上先修文档：README 写的出口、名字、版本跟仓里不一致时，以仓里为准，当场改文档，别拿旧文档指路」。验收：README 里的包名与 `gh api repos/<owner>/<repo>/actions/artifacts --jq '.artifacts[].name'` 对得上。
+- **规模**：`GLOBAL.md` 36 → 37 行。
+
 ## 2026-11-01 · 规范重写：282 行压到 36 行，全仓通用
 
 - **触发**：主人「从 0 提问重写规范」「正常点别写花里胡哨」，逐条审过 28 条后定稿。
