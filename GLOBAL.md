@@ -30,7 +30,7 @@
 ## 六、工程
 - **目录**：脚本只放 `tools/`，不建 `scripts/`、`ci/`。
 - **版本**：五段 `yy.m.d.当日序号.总序号`，月日不补零。
-- **产物**：artifact 名 `项目名-版本`；每仓 artifact 总数 ≤5，按 `created_at` 留最新 5 个，超出当轮删，403 则报阻塞（仓名、返回码、命令）；Release 每仓 ≤1 个。验收 `gh api repos/<owner>/<repo>/actions/artifacts --jq '.total_count'`。
+- **产物**：不规定 artifact 叫法，也不拿名字当判据（段数、前缀、是否带版本号一律不据此删）；每仓 artifact 总数 ≤5，按 `created_at` 留最新 5 个，超出当轮删，403 则报阻塞（仓名、返回码、命令）；Release 每仓 ≤1 个。验收 `gh api repos/<owner>/<repo>/actions/artifacts --jq '.total_count'`。
 - **许可**：`LICENSE` 是 GPL-3.0 全文（35149 字节），不自造；`Selffont` 字体 OFL-1.1。
 ## 七、文档
 - **中文思考**：工具调用之间的推理写中文，英文只允许标识符、命令、路径、报错原文。
