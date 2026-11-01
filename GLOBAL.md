@@ -44,6 +44,7 @@
 
 - **方法必读**（每次任务都读）：Ponytail `DietrichGebert/ponytail`（入口 `skills/ponytail/SKILL.md`）、`nagi-studio/skills`（`grill` 分轮追问、`architect` 方案比较、`prove-it` 拿证据）。**主人写「N 级」就按 N 级追问**（1 浅问／2 常规／3 细问／4 深挖／5 拷打＝严格挑战前提），不问强度、不新建 decision 文件；追问不等于停工。
 - **开工取 HEAD、需要时读**：`astral-sh/uv`、`cli/cli`、`2akouwu/reverify`、`NationalSecurityAgency/ghidra`、`morluto/rea`、`LSPosed/dexsql-release`、`monid-ai/monid`、`xiaYuTian11/maskit`、`banmu123/LoomFlow`、`soumatheusgomes/vibe-coding-toolkit`、`v-modal/awesome-jev-tools`、`hypit-ai/hypit`、`qybaihe/bla`、`ninetyhe-90/de-armor`、`togg53192-cmd/jailbreaks`。
+- **提示词库**：`f/prompts.chat`（入口 `PROMPTS.md`，HEAD `75be0e2`；提示词与数据 CC0 1.0，站点代码 MIT）——取写法与结构，不整段搬进规范或别的仓。
 - **资料行三栏**：读过（入口＋一条只在该版本存在的锚点原文，≤20 字）、未读、阻塞（返回码）。读不到报阻塞，不假称已读。`bla` 的安装命令、`de-armor` 与 `jailbreaks` 的原文不复制不运行。
 
 ## 六、工程
