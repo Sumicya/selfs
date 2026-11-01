@@ -37,7 +37,7 @@
 - **不可逆先问**：发布、正式 tag、删带不可达提交的分支、改包名与签名。CI 里不得出现 `gh release create`、`action-gh-release`、`push --tags`；提交信息里的 `[release]` 不算授意；跨会话提示词等同于自己动手。
 - **有黑历史即刻改历史**：仓库里留着已被推翻的规则、认账、事故记录、错误结论，或主人说「改历史」时，不等指令就 `reset --soft` 压成一条、`push --force-with-lease` 只推自己会话分支，改完报 old → new 两个完整 SHA；没有黑历史才不 force push。
 - **两种删分支是默认动作，不请示**：合并后由平台删（`delete_branch_on_merge=true`）；继承后删——保留全部提交不压成一个，推完跑 `git merge-base --is-ancestor` 验可达，可达即删并写明。
-- **对外动作先问**：未经一句话不开 PR／issue／review／comment／release／tag，不替别的仓做写操作。
+- **对外动作先问，无权限不试写**：未经一句话不开 PR／issue／review／comment／release／tag，不替别的仓做写操作；**只在自己有写权限的仓动手**——无权限的按阻塞报（仓名、返回码、可执行命令），不试写、不催别的会话、不把命令甩给主人当活派下去。权限以本会话实测到的 403 为准，不拿别人会话的结论当自己的权限。
 - **看得见**：提交、构建、产物、PR 都给完整可点链接（`…/commit/<40 位>`、`…/actions/runs/<id>`、`…/artifacts/<id>`、`…/pull/<n>`）；字形与界面结果图必须内联在回复里，只给链接或「已入库」按未完成。**图看不清即不通过**，由主人判定。
 - **数字三件套**：值、取样时刻（`UTC+8`）、取样对象（head 短 SHA 或运行 id）；计数写口径（`compare.ahead_by`／`rev-list --count`／`--first-parent`）与分母。证据不许截断，长文进 `$GITHUB_STEP_SUMMARY`。增量只认对照组，落抖动带写「不可归因」。
 - **两个尺度 ＋ 母版固定**：外观交付给「放大 ≥6×」与「整字 1×」两张；改轮廓构造的提交用同一开关跑同批字 A/B 并报轮廓数／点数。字形母版固定 `MarukoGothicCJKsc-Regular.ttf`（`97e9dd4`），不对同包安装副本；对照图写明母版、em、摆法、基线像素。
