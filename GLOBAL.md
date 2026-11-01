@@ -1,5 +1,5 @@
 # Sumicya 全项目规范
-只给 selfs 会话用。别的仓读 `CROSSREPO.md`。读完就做，做完四项收尾。
+Sumicya 名下的仓通用，谁在仓里干活谁读。读完就做，做完四项收尾。
 ## 一、开工
 - **取生效点**：开工先取 `Sumicya/selfs` 里 `commit.committer.date` 最晚的提交，SHA 写进汇报；取不到、或不是最新，按「未读规范」处理，不许照记得的版本干活。
 - **先跑后写**：没跑过的命令、链接、数，一律不写成已做；写不出命令的标「未验证」。
@@ -26,7 +26,7 @@
 ## 五、上游
 - **必读**：Ponytail `DietrichGebert/ponytail`（`skills/ponytail/SKILL.md`）、`nagi-studio/skills`。你写「N 级」就按 N 级追问，5 级＝严格挑战前提。
 - **其余开工取 HEAD、需要时读**：`astral-sh/uv`、`cli/cli`、`2akouwu/reverify`、`NationalSecurityAgency/ghidra`、`morluto/rea`、`LSPosed/dexsql-release`、`monid-ai/monid`、`xiaYuTian11/maskit`、`banmu123/LoomFlow`、`soumatheusgomes/vibe-coding-toolkit`、`v-modal/awesome-jev-tools`、`hypit-ai/hypit`、`qybaihe/bla`、`ninetyhe-90/de-armor`、`togg53192-cmd/jailbreaks`。
-- **资料行**：读过（入口＋锚点）、未读、阻塞；读不到就写读不到。
+- **资料行**：读过（入口＋锚点）、未读、阻塞，读不到就写读不到；跨仓只读只报「看到什么＋取样时刻＋SHA」，不判合规、不引用别会话结论、不用截断后的 grep 下「没有」。
 ## 六、工程
 - **目录**：脚本只放 `tools/`，不建 `scripts/`、`ci/`。
 - **版本**：五段 `yy.m.d.当日序号.总序号`，月日不补零。
