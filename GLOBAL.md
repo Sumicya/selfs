@@ -42,7 +42,7 @@ Sumicya 全仓通用。规范只有这一份文件。
 - **28 目录收敛**：仓库只留构建与交付必需的目录；辅助脚本统一放 `tools/`，不设 `scripts/`、`ci/` 等平级脚本目录。
 - **29 工具准入**：`tools/` 只放与产物构建、逆向核对或核心算法直接相关且要长期复用的工具。不进仓的有四类：汇报与会话辅助脚本、读源码做字符串匹配的伪测试、手写的假宿主引擎替身、一次性生图脚本与废弃原型。
 - **30 文档目录克制**：除 `README.md`、`CHANGELOG.md` 与许可证外，未经你要求不新建 `TODO.md`、`docs/decisions-*.md` 这类文档，也不在 `docs/` 下拉日期子目录堆过程表（`docs/evidence/` 除外）。
-- **31 借工具**：逆向与打包用现成的——Ghidra／IDA／jadx／Apktool／Frida／mitmproxy／ImHex／radare2，不自己重写；能让 agent 直接驱动的（MCP 封装）优先。来源：@robiartec 2026-11-01 帖，做法是先把逆向仓按用途分组、同一目标用 clean-room 循环交叉验证；原帖措辞未复核，工具名以本条清单为准。
+- **31 借工具**：逆向与打包用现成的，不自己重写；能让 agent 直接驱动的（MCP 封装）优先。原帖分组五类：①分析核心 REA／Ghidra／GhidraMCP／ida-pro-mcp ②移动与 App jadx／Apktool／Frida／ILSpy ③二进制与底层 radare2／x64dbg／ImHex／angr ④网络与运行 mitmproxy／dnSpy／rizin／raddebugger ⑤重建与验证 awesome-ai-reverse-engineering（122 个仓逐个打分）／awesome-reverse-engineering／REA 的调查流程提示词／clean-room 循环（`SPEC.md`＋oracle＋反复检查到一致）。流程：二进制 → REA → `SPEC.md` → 重建 → oracle → 重试。来源：@robiartec 2026-11-01 帖（[链接](https://x.com/robiartec/status/2116945895015231669)）。
 - **32 产物**：每仓 artifact ≤5 个，按 `created_at` 留最新 5 个；版本号五段 `yy.m.d.当日序号.总序号`；**包只从 Actions artifact 下**：README 写这一处，写完点开核对，打得开才算（发布禁令见四·不可逆操作）；验收 `gh api repos/<owner>/<repo>/actions/artifacts --jq '.total_count'`。
 - **33 工作流结构**：有产物仓固定两个——`build.yml`（`name: Build`，只 `push` 与 `workflow_dispatch`）和 `pr-check.yml`（`name: PR check`，只 `pull_request`）；清理 job 与 `build` 同用 `concurrency: <项目>-cleanup`（`cancel-in-progress: false`）串行、挂 `if: always()`，别只写 `needs: build`。
 - **34 工作流参数**：两文件顶层 `env` 声明 `SEGMENTS: '5'` 与 `CLEANUP_APPLY: 'true'`；artifact 名 `项目名-版本`、`retention-days: 5`、`if-no-files-found: error`、`overwrite: true`；步骤名用中文短语，顶部注释不超过 5 行。
