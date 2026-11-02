@@ -20,10 +20,13 @@ Sumicya 全仓通用。做什么写这里，交之前查什么写 `CHECK.md`，�
 
 ## 四、底线
 - **对外动作先问**：不开 PR／issue／release／tag、不发布、不删带提交的分支、不改包名与签名、不改默认分支。
+- **不可逆操作**：任何仓不 force push；发布、正式 tag、删带提交的分支要你一句话。工作流里不许有自动发版——`gh release create`、`softprops/action-gh-release`、`git push --tags` 一律不许进 CI，提交信息里的 `[release]` 也不算什么授意；校验：`grep -rnE "gh release create|action-gh-release|push --tags" .github/` 必须为空。
 - **无权限不试写**：403 报仓名、返回码、一条能跑的命令。
+- **汇报如实**：不用局部完成冒充整体；不静默替换你指定的东西，找不到就写「指定的是 X，实际用了 Y，为什么」。
 - **时间只写 `+08:00`**：禁 `Z`、禁时区地名。
 - **报数三件**：值、取样时刻、对象 SHA；缺一样按没报。
 - **看得见**：提交、构建、产物、PR 给可点链接；图不内联视为没有；外观类交付（字体、字形、界面）必须同字、同尺寸、并排、放大出图，干净／圆润／平滑在图上判，只给数字按未完成。
+- **提交标题**：`类型: 中文摘要`，类型用规范／修复／功能／文档／重构这几个词。
 - **检讨**：只给 Arena 会话写，按 token 计的会话不写；辱骂时先贴再办事，不落仓库；一条违规一篇，篇首标等级与字数，正文**每满 100 汉字紧跟一枚「（100）」式标记**，摆在段首当编号用不算；轻错 1000、中错 2500、重错 5000；违反事实一律算重错。
 
 ## 五、上游与跨仓
@@ -34,7 +37,8 @@ Sumicya 全仓通用。做什么写这里，交之前查什么写 `CHECK.md`，�
 - **目录**：脚本放 `tools/`。
 - **借工具**：逆向与打包用现成的——Ghidra／IDA／jadx／Apktool／Frida／mitmproxy／ImHex／radare2，不自己重写；能让 agent 直接驱动的（MCP 封装）优先。来源：@robiartec 2026-11-01 那条帖（[链接](https://x.com/robiartec/status/2116945895015231669)）。
 - **产物**：每仓 artifact ≤5 个，按 `created_at` 留最新 5 个；版本号五段 `yy.m.d.当日序号.总序号`；**包只从 Actions artifact 下**：不发版、不开 Release、不打 tag，README 写这一处，写完点开核对，打得开才算；验收 `gh api repos/<owner>/<repo>/actions/artifacts --jq '.total_count'`。
-- **许可**：`LICENSE` 用 GPL-3.0 全文；Selffont 字体 OFL-1.1。
+- **工作流**：有产物仓固定两个——`build.yml`（`name: Build`，只 `push` 与 `workflow_dispatch`）和 `pr-check.yml`（`name: PR check`，只 `pull_request`）；清理 job 与 `build` 同用 `concurrency: <项目>-cleanup`（`cancel-in-progress: false`）串行、挂 `if: always()`，别只写 `needs: build`；两文件顶层 `env` 声明 `SEGMENTS: '5'` 与 `CLEANUP_APPLY: 'true'`；artifact 名 `项目名-版本`、`retention-days: 5`、`if-no-files-found: error`、`overwrite: true`；步骤名用中文短语，顶部注释不超过 5 行。
+- **许可**：`LICENSE` 用 GPL-3.0 全文，不自造许可文本；二进制、APK、字体包随包附 `LICENSE` 或同页给全文；改上游文件在提交说明写清改了哪处与日期；分发二进制同页给可构建的对应源码；README 不许出现「仅供学习交流」「禁止商用」；Selffont 的字体与字形源文件按 OFL-1.1。
 
 ## 七、文档
 - **中文思考**：agent 推理必须用中文。
