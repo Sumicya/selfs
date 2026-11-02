@@ -18,7 +18,7 @@ Sumicya 全仓通用。规范只有这一份文件。
 - **10 看得见**：提交、构建、产物、PR 给可点链接；图不内联视为没有；外观类交付（字体、字形、界面）必须同字、同尺寸、并排、放大出图，干净／圆润／平滑在图上判，只给数字按未完成。
 
 ## 四、上游
-- **11 上游**：`DietrichGebert/ponytail`、`nagi-studio/skills`、`morluto/rea` 每轮读到入口文件全文，读完才动手，读一半按未读算；其余上游仓每 1 小时读一次。入口按条内链接算，不拿仓库首页凑数：`ponytail` 是 `skills/ponytail/SKILL.md`，`skills` 是 `README.md`，`rea` 是 `README.md`，路径失效时以上游 README 为准。资料行每仓写 HEAD 短 SHA 与读到的文件，非必要部分也要读完，但不必逐项报。跨仓只读，只报「看到什么＋取样时刻＋SHA」，不判合规、不引用别会话结论、不用截断后的 grep 下「没有」。
+- **11 上游**：`DietrichGebert/ponytail`、`nagi-studio/skills`、`morluto/rea` 每轮读到入口文件全文，读完才动手，读一半按未读算；其余上游仓每 1 小时读一次。入口按条内链接算，不拿仓库首页凑数：`ponytail` 是 `skills/ponytail/SKILL.md`，`skills` 是 `README.md`，`rea` 是 `README.md`，路径失效时以上游 README 为准。资料行每仓报三样：入口文件路径、`git ls-remote https://github.com/<owner>/<repo> HEAD` 当轮取的短 SHA、该文件 size 字节，并摘三处锚点（首、中、尾各一句原文，每处不少于 8 字）；少一处、size 对不上、SHA 不是当轮取的，按未读算，复核命令 `gh api repos/<owner>/<repo>/contents/<path>?ref=<sha> --jq '.size'`。跨仓只读，只报「看到什么＋取样时刻＋SHA」，不判合规、不引用别会话结论、不用截断后的 grep 下「没有」。
 
 ## 五、工程
 - **12 目录与工具**：仓库只留构建与交付必需的目录，辅助脚本统一放 `tools/`，不设 `scripts/`、`ci/` 等平级脚本目录；`tools/` 只放与产物构建、逆向核对或核心算法直接相关且要长期复用的工具，不进仓的有四类：汇报与会话辅助脚本、读源码做字符串匹配的伪测试、手写的假宿主引擎替身、一次性生图脚本与废弃原型。
