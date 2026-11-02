@@ -16,14 +16,14 @@ Sumicya 全仓通用。
 - **无权限不试写**：403 报仓名、返回码、一条能跑的命令。
 - **时间只写 `+08:00`**：禁 `Z`、禁时区地名。
 - **报数三件**：值、取样时刻、对象 SHA；缺一样按没报。
-- **看得见**：提交、构建、产物、PR 给可点链接；图不内联视为没有；图要附复算的命令与结果，我自己跑，不让人跑。
+- **看得见**：提交、构建、产物、PR 给可点链接；图不内联视为没有。
 - **检讨**：辱骂时先贴再办事，不落仓库；一条违规一篇，篇首标等级与字数，正文每满 100 汉字一枚标记；轻错 1000、中错 2500、重错 5000；违反事实一律算重错。
 ## 五、上游与跨仓
 - **必读**：`DietrichGebert/ponytail`、`nagi-studio/skills`。
 - **资料行**：读过（入口＋锚点）、未读、阻塞；跨仓只读只报「看到什么＋取样时刻＋SHA」，不判合规、不引用别会话结论、不用截断后的 grep 下「没有」。
 ## 六、工程
 - **目录**：脚本放 `tools/`。
-- **产物**：每仓 artifact ≤5 个，按 `created_at` 留最新 5 个，超 5 算不合格、并发也不许拿来解释；版本号五段 `yy.m.d.当日序号.总序号`；**包只从 Actions artifact 下**：不发版、不开 Release、不打 tag，README 写这一处，写完点开核对，打得开才算；验收 `gh api repos/<owner>/<repo>/actions/artifacts --jq '.total_count'`。
+- **产物**：每仓 artifact ≤5 个，按 `created_at` 留最新 5 个；版本号五段 `yy.m.d.当日序号.总序号`；**包只从 Actions artifact 下**：不发版、不开 Release、不打 tag，README 写这一处，写完点开核对，打得开才算；验收 `gh api repos/<owner>/<repo>/actions/artifacts --jq '.total_count'`。
 - **许可**：`LICENSE` 用 GPL-3.0 全文；Selffont 字体 OFL-1.1。
 ## 七、文档
 - **中文思考**：agent 推理必须用中文。
