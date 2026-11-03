@@ -1,3 +1,11 @@
+## 2026-11-03 · 第 16 条不再写死工作流条数；Selffont 现阶段的四步
+
+- **第 16 条改法**：删「有产物仓固定两个」，改成「条数不写死，以仓里现场为准」——给出取数命令 `gh api repos/<owner>/<repo>/actions/workflows --jq '.workflows[] | [.name,.path,.state] | @tsv'`，汇报写名字＋路径＋state＋条数＋取样时刻，与输出对不上按违反事实算；保留形状约束（`build.yml` 只 `push` 与 `workflow_dispatch`、`pr-check.yml` 只 `pull_request`、不许自动发版），多出来的工作流各自写清触发、产物名、并发组与保留天数，缺一项按未写；新增或停用同轮把本条与仓里对齐。`env` 从「两文件顶层」改为「各工作流顶层」。
+- **当轮实测**（2026-11-03T14:2x+08:00，`Sumicya/Selffont`，分支 `arena/ce1ced3e-selffont` @ `0bc16fe`）：工作流 **4 条，全 active**——`Build`（367415946，`build.yml`）、`PR check`（383918090，`pr-check.yml`）、`Probe`（402730595，`probe.yml`）、`Mother`（403331940，`mother.yml`）。此前的规范写 2，与仓里差 2。
+- **Selffont 现阶段（主人口径，2026-11-03）**：①预览字体 `selfrounds` 用自己改的母版，字体不合格、不满意，**暂时不出工作流**；②主版 `build` 先出母版包，合格以后才出 selffont 包；③做字体热切换的 LSPosed app；④继续打磨 selfrounds。
+- **与仓里的差（照实记，不改仓）**：`build.yml@0bc16fe` 现在每次 `push` 都走「预览出包」并上传 artifact `selfrounds-<sha8>`（`retention-days: 3`），最近三条 `selfrounds-0bc16fe7`（9,721 B）／`selfrounds-46e63567`（9,900 B）／`selfrounds-7b9fd36a`（9,527 B）；全量构建产 `maruko-<VERSION>`（`path: build/root`）——即母版包已出，`Selffont-<版本>` 的正式包还没有对应步骤。热切换一侧仓里已有 `lsp/`（Gradle 工程，`lsp/app/src/main`）与 `module/hotswap.sh`（该脚本自述四条运行时换字体的路都有真机证据判死，只剩报告状态与清残留）。
+- **未动**：`maruko-*`／`selfrounds-*`／`probe-*` 与第 15、16 条「artifact 名 `项目名-版本`」仍不一致，跨仓只读，等主人放行再改。
+
 ## 2026-11-02 · 第 11 条加可核的读证；旧检讨不重贴
 
 - **旧检讨不重贴**：主人裁定「3 不贴」，会话里已贴过的检讨不重发，后续只按第 22 条写新的。
