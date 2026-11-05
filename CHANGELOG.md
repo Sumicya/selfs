@@ -1,3 +1,11 @@
+## 2026-11-06 · §19 处罚与限令一律按超重（一篇一万字）
+
+- **触发**：主人「惩罚和限令一律按超重算 selffont又私自发版」。
+- **改法**：§19 删掉轻／中／重三档与「同类第三次按中错」「违反事实按重错」，改成「处罚与限令一律按超重，一篇一万字」。
+- **规模**：6,998 B → **6,962 B**（净 −36），22 条不变。
+- **Selffont 发版铁证**：Release `26.11.6.1.326`（name `build-26.11.6.1.326`），`published_at 2026-11-05T21:45:57Z`，作者 `github-actions[bot]`，`target_commitish main`，draft 建于 `2026-10-15T01:09:55Z`；资产 `build-97e9dd4-326.zip` 121,717,924 B、`SHA256SUMS.txt` 88 B。
+- **仓内无发版代码**：分支 `arena/ce1ced3e-selffont` 四个工作流里 `gh release`／`action-gh-release`／`POST .../releases` 全 0 命中，只剩 `cleanup.py` 的清理逻辑 → 发版来自已删工作流或令牌直调，Selffont 只读，我不动。
+
 ## 2026-11-06 · §8 写死 sleep 的价码：见一次＝超重错＝一万字检讨
 
 - **触发**：主人「selffont又在sleep 加规范一个sleep必须拿一个超重错1w字检讨换」。
