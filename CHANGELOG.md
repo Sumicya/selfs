@@ -1,3 +1,12 @@
+## 2026-11-05 · 撤掉「只设 build.yml」，条数回到以仓里为准
+
+- **触发**：主人「selffont 4 个工作流我看你怎么写死 而且这个我还骂过」。
+- **实测**：`Sumicya/Selffont` 的 `arena/ce1ced3e-selffont` 分支上有 5 个 workflow——`build.yml` 8,900 B、`mother.yml` 10,927 B、`hotswap.yml` 4,346 B、`probe.yml` 4,120 B、`pr-check.yml` 1,148 B；`main` 只有 `build.yml` 4,455 B。
+- **我错在哪**：今天 `c51e466` 把「条数不写死，以仓里为准」删掉、换成「只设 `build.yml`」——这正是 11-03 主人点名过的事（`c1f45e5`「第 16 条不写死工作流条数，改为现场取数」）。我把那条又写回去了，还用写死的条文判 Selffont「违规」。
+- **改法**：§12 改回「条数以仓里为准」，并给一条不涉及文件名的判据——「每个检查必须能红，从不红的删」。`pr-check` 靠这条被杀，不靠点名。
+- **支付字节**：删 §10 那句逆向流程（二进制 → REA → `SPEC.md` → 重建 → oracle → 重试），约 100 B。
+- **规模**：7,154 B → **7,079 B**（`wc -c` 现取，−75 B），22 条不变。
+
 ## 2026-11-05 · 删掉 pr-check.yml 这条规矩（§12 只留 build.yml）
 
 - **触发**：主人原话「还搞什么傻逼prcheck」。实测 Gself：`actions/workflows/pr-check.yml/runs` → `total_count 5`，5 次全 `success`，**0 次独家捕获**；而 `build.yml` 的 `push` 不限分支，同一 SHA 必然双跑——`96dffa6` 的 Build `42021309930` 与 PR check `42021315785` 只差 3 秒。经典 branch protection 读不到（403），`rulesets` 为空，所以它连 required check 都不是，纯粹是一条永远绿的检查。
