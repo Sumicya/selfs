@@ -1,3 +1,11 @@
+## 2026-11-06 · §8 写死 sleep 的价码：见一次＝超重错＝一万字检讨
+
+- **触发**：主人「selffont又在sleep 加规范一个sleep必须拿一个超重错1w字检讨换」。
+- **取证（现读 tarball，非记忆）**：Selffont `main` 0 命中；分支 `arena/ce1ced3e-selffont` 的 `.github/scripts/cleanup.py:261` 有 `time.sleep(5)`；Qself `main` `cleanup.py:279` 有 `time.sleep(2)`；Gself `main` `cleanup.py:279` `time.sleep(2)`、`build.yml:62` `sleep 3`、`docs/verify-on-device.md:123` `sleep 60`。
+- **改法**：§8 加「见一次按超重错，抵一万字检讨」；同时把 §8 里那条长 API 命令压成 `gh api .../runs/<id> --jq .status` 支付字节。
+- **规模**：7,000 B → **6,998 B**（净 −2），22 条不变。
+- **验收**：`grep -c "抵一万字检讨" GLOBAL.md` 为 1；三仓 `grep -rn sleep` 命中数写进审计。
+
 ## 2026-11-06 · 产物前缀白名单收口＋CI 审计落盘
 
 - **改法**：§13「前缀＝项目名小写」改成「前缀＝项目名」（Qself／Gself／Selffont 现存产物都是大写开头，写小写会把自己的产物判违规）。

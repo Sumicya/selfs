@@ -15,7 +15,7 @@ Sumicya 全仓通用。只有这一份文件。四段：事实 → 执行 → �
   Felix Rieseberg《how to be more ambitious》（[链接](https://felixrieseberg.com/how-to-be-more-ambitious-a-tutorial-for-humans-with-models/)）。 落地：①动作 ≥3 条，每条落到文件或命令；②材料写 commit＋文件＋行号或设备原样读数；③每条方法带能粘的命令与工具名；④判据是外部工具或客观指标，「我看着好」按未完成算。
 - **6 探针**：方案依赖平台能力时，先用 ≤3 条命令验证，贴原样输出；没记录按未开工。
 - **7 提问**：默认不问，能查的不问；只在点名、改判据、本地测不出、不可逆、严重、换方案时问；一次问完，标推荐与后果；答完整体改。
-- **8 等待**：不 `sleep`、不手写循环，命令块里同样不许。先查一次 `gh api repos/<o>/<r>/actions/runs/<id> --jq '.status,(.conclusion//"")'`；未结束用 `gh run watch <id> --interval 30 --exit-status`；超 20 分钟先交能交的。
+- **8 等待**：不 `sleep`、不手写循环，命令块里同样不许；见一次按超重错，抵一万字检讨。先查 `gh api .../runs/<id> --jq .status`；未完用 `gh run watch <id> --interval 30 --exit-status`；超 20 分钟先交能交的。
 - **9 目录与工具**：辅助脚本进 `tools/`，不设 `scripts/`、`ci/`；四类不进仓——会话脚本、读源码做字符串匹配的伪测试、假引擎替身、一次性原型。
 - **10 借工具**：现成与能接 MCP 的优先。
 
