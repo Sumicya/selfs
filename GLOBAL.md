@@ -17,7 +17,7 @@ Sumicya 全仓通用。规范只有这一份文件。四段：**事实 → 执�
   照着落地的四条：①动作 ≥3 条，每条落到文件或命令；②入手材料写 commit＋文件＋行号，或设备原样读数，不看二手转述；③每条方法跟一条能粘的命令，并写工具名；④判据必须是外部工具或客观指标（oracle），只有「我看着好」按未完成算。来源：Felix Rieseberg《how to be more ambitious》（[链接](https://felixrieseberg.com/how-to-be-more-ambitious-a-tutorial-for-humans-with-models/)）。
 - **6 探针先行**：方案依赖设备或平台能力（挂载、系统服务、私有 API、某个 jar）时，先用不超过三条命令验证它存在（`mount -t overlay …`、`java -version`、`gh api repos/…`），把原样输出贴进汇报；没有探针记录就动手，按未开工处理。
 - **7 提问与自决**：默认少问，能自己查的不问；只在你点名，或改判据、平台本地测不出、不可逆、严重、换方案时问；一次问完，选项数量不限，标推荐与后果；答完按回答整体改，不只改被点名处；问完之后不停工，可回退且不属上面所列的，按推荐项做并写明假设与撤销办法。
-- **8 不拿等待当工作**：等 CI、等构建不用 `sleep` 轮询（长睡更不行）；确实要等就自己找事情做，别在等待里耗着；同一条消息不重复等同一件事，超过 20 分钟先交能交的部分并写明剩什么。
+- **8 不拿等待当工作**：等 CI、等构建不用 `sleep` 轮询（长睡更不行），**也不许手写 `for`／`while` 加 `sleep` 的循环**；先查一次状态 `gh api repos/<owner>/<repo>/actions/runs/<id> --jq '.status+" "+(.conclusion//"")'`，已完成就直接读结论，没完成就用 `gh run watch <id> --interval 30 --exit-status` 一条命令阻塞，或用进程工具的阻塞等待，不自己造轮询；确实要等就自己找事情做，别在等待里耗着；同一条消息不重复等同一件事，超过 20 分钟先交能交的部分并写明剩什么。
 - **9 目录与工具**：仓库只留构建与交付必需的目录，辅助脚本统一放 `tools/`，不设 `scripts/`、`ci/` 等平级脚本目录；`tools/` 只放与产物构建、逆向核对或核心算法直接相关且要长期复用的工具，不进仓的有四类：汇报与会话辅助脚本、读源码做字符串匹配的伪测试、手写的假宿主引擎替身、一次性生图脚本与废弃原型。
 - **10 借工具**：逆向与打包用现成的，不自己重写；能让 agent 直接驱动的（MCP 封装）优先。原帖分组五类：①分析核心 REA／Ghidra／GhidraMCP／ida-pro-mcp ②移动与 App jadx／Apktool／Frida／ILSpy ③二进制与底层 radare2／x64dbg／ImHex／angr ④网络与运行 mitmproxy／dnSpy／rizin／raddebugger ⑤重建与验证 awesome-ai-reverse-engineering（122 个仓逐个打分）／awesome-reverse-engineering／REA 的调查流程提示词／clean-room 循环（`SPEC.md`＋oracle＋反复检查到一致）。流程：二进制 → REA → `SPEC.md` → 重建 → oracle → 重试。来源：@robiartec 2026-11-01 帖（[链接](https://x.com/robiartec/status/2116945895015231669)）。
 
