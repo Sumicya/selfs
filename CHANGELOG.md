@@ -1,3 +1,14 @@
+## 2026-11-05 · 规范默认档位写成 ponytail ultra
+
+- **触发**：主人问「ponytail ultra 默认启用怎么没有」。上游 `DietrichGebert/ponytail@96608e0` 原文两句：`| **full** | The rules above. Default. |`、`| **ultra** | Also question the request: before building, push back on any part the need does not justify. |`——默认是 full，ultra 要显式切换；我读了三轮这份文件，规范里连「档」字都没有，跑的一直是 full。
+- **改法**：规范第 2 行加一句 `ponytail 按 ultra 跑，先驳需求里站不住的部分。`；条数不变（22），旧号→新号无变化。
+- **为守住「字节只许减」先删**（都不是独有判据）：
+  - 第 20 条 `自己的漏读当轮清零` → 删：紧跟其后的「欠账表取消」已表示同类意思，两处并一处。
+  - 第 22 条 `数量现场取` → 删：同条开头「`git status --porcelain` 为空且本地＝远端」就是现场取的判据本身。
+  - 第 16 与第 20 各有一处禁 TODO，删第 20 那处（`不落盘、不建 TODO`），第 16 留一处，原句 `不新建 TODO.md 和过程表` 改写为 `不建 TODO 与过程表`（同义压短，逐句扫描会把这处记成删句，即本条）。
+- **删了怎样**：禁落盘仍成立（第 16 条一处）；现场取仍成立（第 22 条 git 命令）；欠账表仍取消。没有判据消失。
+- **规模**：7,442 B → **7,385 B**（`wc -c` 现取）。
+
 ## 2026-11-05 · 继承已删分支 28 个提交（内容不采用）
 
 - **触发**：主人要求「继承本仓其他分支的提交——保留历史、不压成一个，跑 `git merge-base --is-ancestor <旧 tip> <新 tip>` 验过可达，再删旧分支」。
