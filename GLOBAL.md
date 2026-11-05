@@ -21,7 +21,7 @@ Sumicya 全仓通用。只有这一份文件。四段：事实 → 执行 → �
 
 ## 三、交付
 - **11 对外动作**：不发版、不打 tag、不删带提交的分支、不 force push、不改默认分支；CI 里不许 `gh release create`／`action-gh-release`／`push --tags`，`grep -rnE` 必须为空；403 报仓名、返回码、一条能跑的命令；新建仓当轮 `gh repo edit <owner/repo> --delete-branch-on-merge`。
-- **12 工作流**：条数不写死，以仓里为准——`gh api repos/<o>/<r>/actions/workflows --jq '.workflows[]|[.name,.path,.state]|@tsv'`；`build.yml` 只 `push` 与手动、`pr-check.yml` 只 `pull_request`；清理 job 与 build 同 `concurrency`、挂 `if: always()`；`retention-days`、`if-no-files-found: error`、`overwrite: true` 三样不许缺；多出来的工作流写清触发、产物名、并发组、保留天数；顶层 `env` 声明 `SEGMENTS: '5'` 与 `CLEANUP_APPLY: 'true'`；步骤名用中文，顶部注释 ≤5 行。
+- **12 工作流**：只设 `build.yml`（`push` 与手动）；清理 job 与 build 同 `concurrency`、挂 `if: always()`；`retention-days`、`if-no-files-found: error`、`overwrite: true` 三样不许缺；顶层 `env` 声明 `SEGMENTS: '5'` 与 `CLEANUP_APPLY: 'true'`；步骤名用中文，顶部注释 ≤5 行。
 - **13 产物**：artifact 一仓一形状（`<项目名>-<版本>` 或 `<项目名>-<档位>-<版本>`）；分三档时写清预览（≤3 天）、母版（≤5 天）、正式，出正式档前必须有一条能跑的合格命令；包只从 artifact 下；Release ≤1；每仓 artifact ≤5；清理失败不算「本轮不清理」的理由。
 - **14 号源**：版本只由 `run_number` 产生，五段 `yy.m.d.当日序号.总序号`；一次会话攒一次推送。
 - **15 许可**：`LICENSE` 用 GPL-3.0 全文，包内附，新建仓当轮补；改上游在提交说明写清改了哪处与日期；README 不许「仅供学习交流」「禁止商用」；字体按 OFL-1.1。

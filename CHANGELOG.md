@@ -1,3 +1,11 @@
+## 2026-11-05 · 删掉 pr-check.yml 这条规矩（§12 只留 build.yml）
+
+- **触发**：主人原话「还搞什么傻逼prcheck」。实测 Gself：`actions/workflows/pr-check.yml/runs` → `total_count 5`，5 次全 `success`，**0 次独家捕获**；而 `build.yml` 的 `push` 不限分支，同一 SHA 必然双跑——`96dffa6` 的 Build `42021309930` 与 PR check `42021315785` 只差 3 秒。经典 branch protection 读不到（403），`rulesets` 为空，所以它连 required check 都不是，纯粹是一条永远绿的检查。
+- **这条规矩的来历**：旧 §C1「有产物仓固定两个工作流…缺一或多一都属违规」，`git log -S "pr-check"` 追到 `96fdd26`（2026-10-31 合并），没有对应的事故记录。
+- **改法**：§12 改成「只设 `build.yml`（`push` 与手动）」，同时删两句与它矛盾的：「条数不写死，以仓里为准——`gh api …`」「多出来的工作流写清触发、产物名、并发组、保留天数」。
+- **删了怎样**：① Qself／Selffont 不必再拆出 `pr-check.yml`（原先按旧 §12 要补，是我的误判）；② Gself 的 `pr-check.yml` 变成待删项（跨仓写要主人一句话）；③ 清理 job、三样、顶层 env、中文步骤名、注释 ≤5 行全部保留，清理链路不受影响；④ 删句 2 处，逐句扫描已对齐。
+- **规模**：7,385 B → **7,154 B**（`wc -c` 现取，−231 B）。
+
 ## 2026-11-05 · 规范默认档位写成 ponytail ultra
 
 - **触发**：主人问「ponytail ultra 默认启用怎么没有」。上游 `DietrichGebert/ponytail@96608e0` 原文两句：`| **full** | The rules above. Default. |`、`| **ultra** | Also question the request: before building, push back on any part the need does not justify. |`——默认是 full，ultra 要显式切换；我读了三轮这份文件，规范里连「档」字都没有，跑的一直是 full。
