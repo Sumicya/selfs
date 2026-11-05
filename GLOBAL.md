@@ -22,7 +22,7 @@ Sumicya 全仓通用。只有这一份文件。四段：事实 → 执行 → �
 ## 三、交付
 - **11 对外动作**：不发版、不打 tag、不删带提交的分支、不 force push、不改默认分支；CI 里不许 `gh release create`／`action-gh-release`／`push --tags`，`grep -rnE` 必须为空；403 报仓名、返回码、命令；新建仓当轮 `gh repo edit <owner/repo> --delete-branch-on-merge`。
 - **12 工作流格式**：构建入口唯一（`build.yml`）；每个 workflow 同一套——`name` 与文件名一致且不重复；顶部 1–5 行注释写触发、产出、不做；顶层 `env` 有 `SEGMENTS: '5'` 与 `CLEANUP_APPLY: 'true'`；并发组 `<仓>-<用途>`、`cancel-in-progress: false`；自带清理 job（`if: always()`、同组、调 `.github/scripts/cleanup.py`）；步骤名中文；artifact 三样 `retention-days`／`if-no-files-found: error`／`overwrite: true`；数量仓里定。
-- **13 产物**：artifact 前缀＝项目名，后缀只许 `<版本>`、`<档位>-<版本>`、`<SHA8>`、`sha256-<SHA8>`；分三档：预览（≤3 天）、母版（≤5 天）、正式，出正式档前必须有一条能跑的合格命令；包只从 artifact 下；Release ≤1；每仓 artifact ≤5，运行留 5 条。
+- **13 产物**：artifact 前缀＝项目名，后缀只许 `<版本>`、`<档位>-<版本>`、`<SHA8>`、`sha256-<SHA8>`；分三档：预览（≤3 天）、母版（≤5 天）、正式，出正式档前必须有一条能跑的合格命令；包只从 artifact 下；Release ≤1；运行留 5 条。
 - **14 号源**：版本只由 `run_number` 产生，四段 `yy.m.d.总序号`；号源不读运行历史；一次会话攒一次推送。
 - **15 许可**：`LICENSE` 用 GPL-3.0 全文，包内附，新建仓当轮补；改上游写清改了哪处与日期；README 不许「仅供学习交流」「禁止商用」；字体按 OFL-1.1。
 - **16 表达与文档**：汇报三段：结论、能不能发、要你做什么，数字落附录；事实标三类（观测／推断／未知）；时间只写 `+08:00`；提交标题 `类型: 中文摘要`；提交、构建、产物、PR 给链接；图不内联视为没有；外观同字同尺寸并排放大出图。README 只写是什么、从哪下、怎么装怎么删；`CHANGELOG.md` 存现行决定＋历史，黑历史不删，要更正加新条；证据图放 `docs/evidence/`，带日期；不建 TODO 与过程表；README 与仓里不一致以仓里为准，当场改。
