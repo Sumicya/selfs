@@ -1,3 +1,11 @@
+## 2026-11-05 · 继承已删分支 28 个提交（内容不采用）
+
+- **触发**：主人要求「继承本仓其他分支的提交——保留历史、不压成一个，跑 `git merge-base --is-ancestor <旧 tip> <新 tip>` 验过可达，再删旧分支」。
+- **现场**：`gh api repos/Sumicya/selfs/branches` 只有 `main`（`96fdd26`）与本会话分支；`main` 已是本分支祖先。PR #14（`arena/67e689b4-selfs`，CLOSED，分支已删）的 tip `49c790e` 有 28 个提交不在本分支历史里，随时会被回收。
+- **做法**：`git merge -s ours 49c790e` —— 记入历史、不加回任何文本（合并后 `GLOBAL.md` 仍 7,442 B，`CHANGELOG.md` 只多本条）。
+- **可达性**：`49c790e`／`1d2212e`／`96fdd26` 三个 SHA 跑 `git merge-base --is-ancestor` 全为真。
+- **删旧分支**：无现存旧分支可删（`git/matching-refs/heads/arena` 只剩本会话分支），本步为空操作。
+
 ## 2026-11-05 · 规范按 ponytail 删：23 条 / 17,681 B → 22 条 / 7,442 B
 
 - **触发**：主人原话「cnmponytail看了没 还明写 浪费内存的脑瘫」。读 `DietrichGebert/ponytail@96608e0`（`skills/ponytail/SKILL.md`，3,496 B）：第一句 `The best code is the code never written.`，中段 `Deletion beats addition.`，末段 `The shortest working diff wins`。对照我写的规范：每轮都在加句子，把 12,952 B 养到 17,681 B，等于每次开工先读一遍废话。
