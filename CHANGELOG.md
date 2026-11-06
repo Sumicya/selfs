@@ -1,3 +1,11 @@
+## 2026-11-06 · §13 产物名不带 SHA；§11 发版步骤要删，不许跳过
+
+- **触发**：主人「sha不要在产物里 qselfgself怎么搞 自动发版怎么不清」。
+- **改法**：§13 后缀只许 `<版本>`，明写「不带 SHA」（`selfrounds-<SHA8>`／`hotswap-<SHA8>` 这类要改）；`Release ≤1` 改 `Release 手工`；§11 补「有就删步骤，不许 `[skip ci]` 绕过」。
+- **支付字节**：删 §19「按 token 计的会话不写」、§13 去「档位」二字。
+- **规模**：6,931 B → **6,929 B**（净 −2），22 条不变。
+- **Selffont 发版事实（现读）**：分支 `build.yml`（10,883 B）第 208–225 行有 `gh release create`，第 33 行 `contents: write`，第 247 行起还有 `cleanup-releases` job；现存 Release 1 个（`26.11.6.1.331`，2026-11-05T23:45:31Z）。这违反 §11，要删步骤、删 job，不是靠 `[skip ci]` 停。
+
 ## 2026-11-06 · §13 前缀白名单改成四条工作流口径
 
 - **触发**：主人「selffont出自版包 build出母版包 selfrounds出selfrounds（被冻死字体不合格）hotswap出hotswap 不对吗」——我上一版写「前缀＝项目名」，把 `build-`／`selfrounds-` 判成违规，判据是错的。
