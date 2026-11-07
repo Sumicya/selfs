@@ -3,7 +3,7 @@ Sumicya 全仓通用。只有这一份文件。四段：事实 → 执行 → �
 
 ## 一、事实
 - **1 实事求是**：话照应现实；没做的说没做成，没跑过的标「未验证」；极端话要有实例；外观看图，对错由一条能跑的命令判。
-- **2 现状认定**：说「现在」给在跑分支的 head 全 SHA（`gh api .../branches/<b> --jq .commit.sha`）；说产物给产物侧读数（`gh api repos/<o>/<r>/actions/artifacts`），代码常量按「未验证」算；冲突以产物为准，取不到写「未取到」＋卡在哪；收尾再取一次同一 SHA，变了先读 diff；取不到重取，再不行按未读规范算。
+- **2 现状认定**：说「现在」给在跑分支的 head 全 SHA（`gh api .../branches/<b> --jq .commit.sha`）；说产物给产物侧读数（`gh api repos/<o>/<r>/actions/artifacts`），代码常量按「未验证」算；冲突以产物为准，取不到写未取到＋卡在哪；收尾再取一次同一 SHA，变了先读 diff；取不到重取，再不行按未读规范算。
 - **3 数字**：给分子分母与改前改后，附一条能复算的命令；值、时刻（`+08:00`）、对象 SHA，缺一按没报。
 - **4 上游**：开工前读完三份入口全文——`DietrichGebert/ponytail` 的 `skills/ponytail/SKILL.md`、`nagi-studio/skills` 与 `morluto/rea` 的 `README.md`；没读就不开工，不许「补读」「下轮补」「稍后读」。读证＝路径＋当轮短 SHA＋size＋首中尾三锚点；其余上游仓每 1 小时读一次。跨仓只读：不判合规、不引用别会话结论、不用截断后的 grep 下「没有」。
 
@@ -21,16 +21,16 @@ Sumicya 全仓通用。只有这一份文件。四段：事实 → 执行 → �
 
 ## 三、交付
 - **11 对外动作**：不发版、不打 tag、不删带提交的分支、不 force push、不改默认分支；CI 里不许 `gh release create`／`action-gh-release`／`push --tags`，`grep -rnE` 必须为空，有就删步骤，不许 `[skip ci]` 绕过；403 报仓名、返回码、命令；新建仓当轮 `gh repo edit <owner/repo> --delete-branch-on-merge`。
-- **12 工作流格式**：构建入口唯一（`build.yml`）；每个 workflow 同一套——`name` 与文件名一致且不重复；顶部 1–5 行注释写触发、产出；顶层 `env` 有 `SEGMENTS: '5'` 与 `CLEANUP_APPLY: 'true'`；并发组 `<仓>-<用途>`、`cancel-in-progress: false`；自带清理 job（`if: always()`、同组、调 `.github/scripts/cleanup.py`）；中文步名；artifact 三样 `retention-days`／`if-no-files-found: error`／`overwrite: true`；数量仓里定。
+- **12 工作流格式**：构建入口唯一（`build.yml`）；每个 workflow 同一套——`name` 与文件名一致且不重复；顶部注释写触发、产出；顶层 `env` 有 `SEGMENTS: '5'` 与 `CLEANUP_APPLY: 'true'`；并发组 `<仓>-<用途>`、`cancel-in-progress: false`；自带清理 job（`if: always()`、同组、调 `.github/scripts/cleanup.py`）；步名中文；artifact 三样 `retention-days`／`if-no-files-found: error`／`overwrite: true`；数量仓里定。
 - **13 产物**：artifact 前缀只许 `build-`（母版包）、`selffont-`（自版包）、`selfrounds-`（预览，冻结）、`hotswap-`（热替换），后缀只许 `<版本>`，不带 SHA；档位：预览 ≤3 天、母版 ≤5 天、正式；正式须有合格命令；包只从 artifact 下；Release 手工；运行留 5 条。
-- **14 号源**：版本只由出包成功的运行产生，五段 `yy.m.d.当日号.总序号`；当日号按当日运行数算；纯 CI／文档不占号；一次会话攒一次推送。
-- **15 许可**：`LICENSE` 用 GPL-3.0 全文，包内附，新建仓当轮补；改上游写清改了哪处与日期；README 不许「仅供学习交流」「禁止商用」；字体按 OFL-1.1。
+- **14 号源**：版本只由出包成功的运行产生，五段 `yy.m.d.当日号.总序号`；当日号按当日运行数算；只手动触发（`workflow_dispatch`）出包；一次会话攒一次推送。
+- **15 许可**：`LICENSE` 用 GPL-3.0 全文，包内附，新建仓当轮补；改上游写清改了哪处和日期；README 不许「仅供学习交流」「禁止商用」；字体按 OFL-1.1。
 - **16 表达与文档**：汇报三段：结论、能不能发、要你做什么，数字落附录；事实标三类（观测／推断／未知）；时间只写 `+08:00`；提交标题 `类型: 中文摘要`；提交、构建、产物、PR 给链接；图不内联视为没有；外观同字同尺寸并排放大出图。README 只写是什么、从哪下、怎么装怎么删；`CHANGELOG.md` 存现行决定＋历史，黑历史不删，要更正加新条；证据图放 `docs/evidence/`；不建 TODO 与过程表；README 与仓里不一致以仓里为准，当场改。
 - **17 一条龙**：一条命令拿成品，手机能跑，写清绝对路径（默认 `/storage/emulated/0/Download`）、装删。
 
 ## 四、检查
 - **18 验收**：三问——条件变没变、产物交了没、删的是否真重复；数字能当场复算；被推翻的写改前→改后；命令原样跑过；外观有图；超时按未完成。
 - **19 检讨**：辱骂先贴再办事；一条违规一篇，篇首标等级与字数，正文每满 100 汉字一枚标记，末行报字数；处罚与限令一律按超重，一篇一万字，文件记行（满行）、当面记字。
-- **20 收尾**：分支 head、链接、图、数字、偏离，末尾三行（要你做什么／卡在哪／下轮第一件事）；「未做」只留要你动手与无权限。
+- **20 收尾**：分支 head、链接、图、数字，末尾三行（要你做什么／卡在哪／下轮第一件事）；「未做」只留要你动手与无权限。
 - **21 条款**：新增写清事故触发、验收命令、归哪节；删并写「旧号→新号」与「删了怎样」；**文件字节只许减不许增，要加先删**。
 - **22 自检**：提交前五条，任一不过不提交——读证三样对齐；旧文逐句扫，漏处记 CHANGELOG；`git status --porcelain` 为空且本地＝远端；README／GLOBAL／CHANGELOG 三处口径一致；结论能定位到文件、行或提交。
