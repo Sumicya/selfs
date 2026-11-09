@@ -1,3 +1,13 @@
+## 2026-11-09 · §5 加入苏格拉底式提问（6,572 B）
+
+- **触发**：主人「+苏格拉底式提问」（在复核 `Selffont@ff3e19b1` 与 `Qself@015ec628` 两仓自检假绿与死码扫描盲区时提出）。
+- **事故与实例**：
+  - `Selffont@ff3e19b1`：`module/post-fs-data.sh:314` 未设 `LC_ALL=C` 调 `awk '{ n += length($0) + 1 }'`，在 Debian `mawk` 下碰巧按字节算，在 CI `ubuntu-24.04` `gawk`（`LANG=C.UTF-8`）下按字符算导致 `captest` 写出 3,433,767 B（164%）、连续 10 条 CI 运行（`build #362–#366`、`selfrounds #39–#43`）全红；`tools/deadcode.py:51-70` 对 `ast.Assign` 与子节点 `ast.Name` 双重计数，使「零引用常量」检测率恒为 0%，漏掉 `deadcode.py:27` 自身的 `SRC_SUFFIX` 等 5 个死常量及 `post-fs-data.sh:332` 刚写的 `_awk_rc` 等 4 个 `.sh` 死变量。
+  - `Qself@015ec628`：`Knob.kt:550` 用宿主 `ctx.packageName` 把 `com.tencent.mobileqq` 印进「关于」弹窗；`Hook.kt:129-137` 在无旧 `qself.xml` 时不写 `_migrated` 致每次进程启动调 `stat(".../qself.xml")`；`tools/deadcode.py:32` 未剥离注释；检讨存沙箱 `/home/user/pf/p8.txt` 未当面贴出；全仓仍留 `docs/status-fade-194px.png`（52,927 B，违禁建 `docs/`）与三份重复 `GPL-3.0.txt`（各 35,149 B）。
+- **改写**：导语、`README.md` 首句与 §5 加入**苏格拉底式提问**——对需求与自测追问苏格拉底六问（澄概念、诘前提、索铁证、造反例、推后果、问存废；造反例不红＝假测试）；验收命令：`grep -n '苏格拉底式提问' GLOBAL.md README.md`。
+- **去重与压缩（旧号→新号 1→1 … 22→22）**：收紧 §1/§2/§4/§5/§8/§9/§11/§12/§14/§15/§16/§19/§22 字词，不删条款。
+- **规模**：`GLOBAL.md` 6,575 B → **6,572 B**（净 −3），`README.md` 2,557 B → **2,556 B**（净 −1），22 条不变。
+
 ## 2026-11-07 · §4 补回 `storytold/craft-anything` 并新增 `Balanov/uncut`（6,575 B）
 
 - **触发**：主人「craftanything呢 qself说找不到 / +https://github.com/Balanov/uncut / https://github.com/storytold/craft-anything」。
