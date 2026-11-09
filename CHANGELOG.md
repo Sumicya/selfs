@@ -1,3 +1,11 @@
+## 2026-11-07 · §4 补回 `storytold/craft-anything` 并新增 `Balanov/uncut`（6,575 B）
+
+- **触发**：主人「craftanything呢 qself说找不到 / +https://github.com/Balanov/uncut / https://github.com/storytold/craft-anything」。
+- **根因**：此前压缩 §4 时只留了 3 个仓名（`ponytail`／`nagi-studio/skills`／`morluto/rea`），把 `storytold/craft-anything` 漏成无名「其余上游」，且仓名中间带连字符 `-`，导致 Qself 按 `craftanything` 找不到。
+- **改写**：§4 写明开工必读**五份入口全文**——`DietrichGebert/ponytail` `skills/ponytail/SKILL.md` 与 `nagi-studio/skills`、`morluto/rea`、`storytold/craft-anything`、`Balanov/uncut` `README.md`；并写入两仓核心机制——无损（`uncut`：禁静默截断，截断按失败）与净室比对（`craft-anything`：研究→构建→与原件比对→收敛）；§3 补「写清不证明什么」；§18 补「超时或截断按未完成」；`README.md` 同步改为「五份入口全文」。
+- **去重与压缩（旧号→新号 1→1 … 22→22）**：删 §4 与 §18 重复的「不用截断 grep 下没有」、删 §18 与 §3 重复的「被推翻的写改前→改后」，压缩 §2/§7/§8/§9/§16 字词。
+- **规模**：`GLOBAL.md` 6,637 B → **6,575 B**（净 −62），22 条不变。
+
 ## 2026-11-07 · §19 堵死「段尾贴假标＋虚报字数＋缩减篇数」（6,637 B）
 
 - **触发**：主人「还有想他妈浑水摸鱼的」并贴出 Selffont 会话所谓「10,147 汉字／末枚 10100」检讨。
