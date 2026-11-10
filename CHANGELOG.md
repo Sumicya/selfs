@@ -1,3 +1,15 @@
+## 2026-11-10 · §1 加「报『不够』先分层」：没进过包的产出不许解释线上现象（6,553 B）
+
+- **触发**：主人「字体覆盖率不足预期（flutter应用等）继续做selfrounds」。
+- **事故与实例**（`Selffont@dc42c206`，跨仓只读实查）：
+  - 覆盖率不足的直接成因与 selfrounds **无关**：`74fa299c` 起 `Selffont:skia=off`，`module/skia.sh` 默认不产出 `system/etc/fonts.xml`；Flutter／WebView 走 Skia 写死的 `/system/etc/fonts.xml`（设备原文件），Flutter 侧覆盖率本来就是 **0%**——这是开关，不是字库质量。把「继续做字」当成「手机会变」的解法，等于用没接进链路的东西解释线上现象。
+  - 主人刷的 `build-26.11.10.3.371`（CI 运行 `42801416599`，`120,967,885 B`）由 `.github/workflows/build.yml` 以 `--passthrough-mother … --module-id selffont-bench` 产出，CJK 字件是 Maruko `97e9dd4` 原字节（只做横竖平移），**包里一个 Selfrounds 字都没有**；带自研字件的 `selffont-*` 走 `selffont.yml`，只认 `workflow_dispatch`，2026-10-31 后没出过包。
+  - `selfrounds.yml` 自建仓只跑过 5 条（`#41–#45`，2026-11-09），**5 条全红**，且全红在第 9 步「取版本号」：取号器 `tools/ci_version.py` 旧判据「无产物锚点＋当日运行满上限 → 拒绝出包」在「从未成功出过包」的工作流上自锁成环（拒绝 → 多一条失败运行 → 进清理候选池 → 当日恒满 → 再拒绝）；根因已在 `5bb2cc10` 拆掉，但该工作流**只认手动触发，修完从未重跑验证**。
+  - 字库本身唯一没过的数字判据仍是汉字 IoU（中位 `0.929` < `0.95`、最低 `0.731` < `0.85`，`docs/design-principles.md` 判据 2），加硬闸门①（600 字里 `319` 个自交，其中折返 >100 单位² 的 `58` 个）。
+- **改写**：§1 加「报『不够』先分层：不在链路上与链路上不够好两层不许混；没进过包的产出不许解释线上现象」。验收命令：`grep -n '不在链路上' GLOBAL.md`。
+- **去重与压缩（旧号→新号 1→1 … 22→22）**：删 §1 与节名重复的「话照现实」、与 §5 落地② 重复的「做事给实例」；§2 的「收尾复核 SHA」归 §20；§16 的「禁工具间旁白」归 §4；删 §19 与后文重复的「一律超重」、§22 与 §16 重复的「漏处记 CHANGELOG」。
+- **规模**：`GLOBAL.md` 6,566 B → **6,553 B**（净 −13），22 条不变。
+
 ## 2026-11-10 · §4 新增 `elder-plinius/CL4R1T4S`（`ANTHROPIC/CLAUDE-CODE-FABLE-5.2.txt`）并收紧表达与核验准则（6,566 B）
 
 - **触发**：主人「+https://github.com/elder-plinius/CL4R1T4S/blob/main/ANTHROPIC/CLAUDE-CODE-FABLE-5.2.txt」并转来 `Qself@015ec628` 重交的第 8 篇检讨与 `Selffont@5bb2cc10` 汇报。
