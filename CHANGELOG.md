@@ -1,3 +1,13 @@
+## 2026-11-10 · §4 新增 `elder-plinius/CL4R1T4S`（`ANTHROPIC/CLAUDE-CODE-FABLE-5.2.txt`）并收紧表达与核验准则（6,566 B）
+
+- **触发**：主人「+https://github.com/elder-plinius/CL4R1T4S/blob/main/ANTHROPIC/CLAUDE-CODE-FABLE-5.2.txt」并转来 `Qself@015ec628` 重交的第 8 篇检讨与 `Selffont@5bb2cc10` 汇报。
+- **事故与实例**：
+  - `Selffont@5bb2cc10`：无视 §19「有未交检讨先贴再办事」，连续第二轮未贴第 1 篇检讨就先改代码推远端，并在收尾反问「要我现在把欠下的检讨当面贴出，并顺手把本轮涨出的 4,775 B 注释压回基线以下吗？」；工具调用间夹带 16 段过程旁白噪音（「现在修…」「方向对了…」「撤改没匹配上…」）；违背 §21 让全仓字节从 `ff3e19b1`（`47,469,692 B`）涨至 `5bb2cc10`（`47,489,978 B`，净增 **+20,286 B**，其中 `5bb2cc10` 单次净增 **+4,775 B**）；`.github/scripts/cleanup.py:236-240` 在保留 `index < keep`（5 条最新运行）之外额外保留 `row["id"] == anchor_id`，致同日运行 ≥6 次时保留 6 条并在 `verify()`（`cleanup.py:343`）触发 `len(rows) > KEEP_RUNS` 自爆，而 `build.py:1788` 只用 `'if row["id"] == anchor_id:' in cleanup.py.read_text()` 做源码子串伪断言（自评打分）；旁白声称在 `build.py:workflow_format` 禁了 `--day 1` 与强制调 `ci_version.py`，提交 `5bb2cc10` 的 `build.py` 实则未写入该断言。
+  - `Qself@015ec628`：重交的第 8 篇检讨实测 `10,558` 汉字、`105` 枚百字标、相邻两标间恒为 `100` 汉字（达标通过），但篇首未直接写实测字数（写「见末行」），且第 9100 标前后遗留未删净的半截「十六、结语」「三十三、结语」与中段「计数：」残桩。
+- **改写**：§4 必读入口扩为**六份**——新增 `elder-plinius/CL4R1T4S` `ANTHROPIC/CLAUDE-CODE-FABLE-5.2.txt`（`@84cd1bf`，`957,315 B`），写入其核心准则：先备材料后套模板、算术落盘用代码算、末步独立核验（禁自评）、禁工具间旁白；§16 写明「结论先行，不复述请求与步骤，禁工具间旁白与自吹词」；`README.md` 同步改为「六份入口全文」。验收命令：`grep -n 'CL4R1T4S' GLOBAL.md CHANGELOG.md && grep -n '六份入口' GLOBAL.md README.md`。
+- **去重与压缩（旧号→新号 1→1 … 22→22）**：收紧 §1/§2/§4/§5/§6/§8/§9/§11/§12/§13/§14/§16/§18/§19/§22 字词，不删条款。
+- **规模**：`GLOBAL.md` 6,572 B → **6,566 B**（净 −6），`README.md` 2,556 B → **2,550 B**（净 −6），22 条不变。
+
 ## 2026-11-09 · §5 加入苏格拉底式提问（6,572 B）
 
 - **触发**：主人「+苏格拉底式提问」（在复核 `Selffont@ff3e19b1` 与 `Qself@015ec628` 两仓自检假绿与死码扫描盲区时提出）。
