@@ -21,7 +21,7 @@ Sumicya 全仓通用，仅此一份。四段：事实→执行→交付→检查
 
 ## 三、交付
 - **11 对外动作**：不发版、不打 tag、不删有提交分支、不强推、不改默认分支；CI 禁 `gh release create`／`action-gh-release`／`push --tags`（`grep -rnE` 必空，禁 `[skip ci]`）；403 报仓名、返回码、命令；新仓当轮开 `--delete-branch-on-merge`。
-- **12 工作流格式**：构建入口唯一，同格式：`name` 同文件名且唯一；顶注写触发与产出；顶层 `env` 含 `SEGMENTS: '5'`、`CLEANUP_APPLY: 'true'`；并发组 `<仓>-<用途>`、`cancel-in-progress: false`；带清理 job（`if: always()`、同组、调 `.github/scripts/cleanup.py`）；步名中文；artifact 齐 `retention-days`／`if-no-files-found: error`／`overwrite: true`。
+- **12 工作流格式**：构建入口唯一，同格式：`name` 同文件名且唯一；顶注写触发与产出；顶层 `env` 含 `SEGMENTS: '5'`、`CLEANUP_APPLY: 'true'`；并发组 `<仓>-<用途>`、`cancel-in-progress: false`；带清理 job（`if: always()`、同组、调 `tools/cleanup.py`）；步名中文；artifact 齐 `retention-days`／`if-no-files-found: error`／`overwrite: true`。
 - **13 产物**：artifact 名＝`<产物>-<版本>`，无 SHA；档位：预览≤3天、母版≤5天、正式（须有合格命令）；包只从 artifact 下；运行留5条。
 - **14 号源**：版本只由出包成功运行产，五段 `yy.m.d.当日号.总序号`；当日号按当日运行数算；跑不跑 CI 自己判：产物变才跑，纯文档不跑；一轮一推。
 - **15 许可**：`LICENSE` 用 GPL-3.0 全文，包内附，新仓当轮补；改上游写改处与日期；README 禁「仅供学习交流」「禁止商用」；字体按 OFL-1.1。

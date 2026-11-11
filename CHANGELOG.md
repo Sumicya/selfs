@@ -1,3 +1,13 @@
+## 2026-11-10 · §12 清理脚本路径改成 `tools/cleanup.py`（§9 与 §12 互相打架）（6,544 B）
+
+- **触发**：主人「gself的重构合不合格」；复核 `Sumicya/Gself` PR #17 head `6b35fd20182617209a179dab01fbac021d3c9b64`。
+- **事故与实例**：
+  - `Gself` 把 `.github/scripts/cleanup.py` 挪成 `tools/cleanup.py`（PR #17 的 `renamed` 一条）。§9 禁 `scripts/` 目录，§12 却写死「调 `.github/scripts/cleanup.py`」——**两条正文互相打架**：Gself 守 §9、`Selffont` 守 §12，谁都算违规。规范自己的矛盾不该由执行仓买单。
+  - 复核 Gself 的另一处**实锤不合格**：`tools/sign-apk.sh`（2,162 B）**全仓零调用**——只有 `CHANGELOG.md` 第 89／175／788 行三条历史条目与它自己第 8 行的注释提到它，没有任何工作流、README 或脚本调用它；而 `tools/deadcode.py` 的 `PY_DIRS` 只收 `tools/` 下的 `.py`（4 个），**扫不到 `.sh`**，其文件头「固有盲区」四条里也没列 `.sh`。违 §9「旧代码清零」与 §22「附命令与盲区，不清不合格」。
+- **改写**：§12 的清理脚本路径改成 `tools/cleanup.py`（与 §9 合成一处口径）。验收命令：`grep -n 'tools/cleanup.py' GLOBAL.md && grep -n 'scripts/' GLOBAL.md`（后者应为空）。
+- **去重与压缩（旧号→新号 1→1 … 22→22）**：无其他改动。
+- **规模**：`GLOBAL.md` 6,553 B → **6,544 B**（净 −9），22 条不变。
+
 ## 2026-11-10 · 更正：主人是**两条并列缺陷**（build 覆盖率／selfrounds 未合格），不是一句因果
 
 - **更正**：上一条把主人「字体覆盖率不足预期（flutter应用等）继续做selfrounds」读成一句因果（拿 selfrounds 去补覆盖率），并据此写下「把『继续做字』当成『手机会变』的解法」——**主人从未这么主张，这句是我的误读，撤回**。原句是**两条并列的缺陷报告**：
