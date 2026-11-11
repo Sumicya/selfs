@@ -4,10 +4,10 @@
 
 ## 使用
 
-每个工程任务先取生效提交：跑 `gh api 'repos/Sumicya/selfs/pulls?state=open&per_page=10'` 查 open 规范 PR，有则取其 head SHA（多个取 `updated_at` 最近者），无则用 `git ls-remote https://github.com/Sumicya/selfs refs/heads/main` 取 `main` SHA；读该提交的 [GLOBAL.md](GLOBAL.md) 全文，按「4 上游」读完六份入口全文并给读证，再读项目 `README.md` 与核对相关实现。该问的六类见 [GLOBAL.md](GLOBAL.md)「7 提问」，已明确要求直接执行；事实标三类（观测／推断／未知）。
+每个工程任务先取生效提交：跑 `gh api 'repos/Sumicya/selfs/pulls?state=open&per_page=10'` 查 open 规范 PR，有则取其 head SHA（多个取 `updated_at` 最近者），无则用 `git ls-remote https://github.com/Sumicya/selfs refs/heads/main` 取 `main` SHA；读该提交的 [GLOBAL.md](GLOBAL.md) 全文，按「4 上游」读完七份入口全文并给读证，再读项目 `README.md` 与核对相关实现。该问的六类见 [GLOBAL.md](GLOBAL.md)「7 提问」，已明确要求直接执行；事实标三类（观测／推断／未知）。
 
 ```text
-读 Sumicya/selfs 生效提交（open 规范 PR head 或 main）<ref> <sha> 的 GLOBAL.md 全文，按「4 上游」读六份入口全文和当前项目 README.md；本轮任务：……
+读 Sumicya/selfs 生效提交（open 规范 PR head 或 main）<ref> <sha> 的 GLOBAL.md 全文，按「4 上游」读七份入口全文和当前项目 README.md；本轮任务：……
 ```
 
 项目事实与必要限制写在项目 `README.md`，末行留规范指针；任何仓库禁留 `AGENTS.md`。README 不复制全局规则，不写版本号或同步戳，不登记会话脚本或假引擎替身（见「9 目录与清旧」）。发现本仓条目与规范冲突，当轮改本仓条目并报主人。无法读取远端时如实说明，不假称已读最新。
