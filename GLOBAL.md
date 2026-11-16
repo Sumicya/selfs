@@ -11,7 +11,8 @@
 - **3 说数字**：给分子分母，给改前改后，附一条能当场跑的复算命令。
   值、时刻（`+08:00`）、对象 SHA 三样缺一样算没报。写完要说清这个数字不证明什么。
   字节数一律 `wc -c` 读出来再写，不许心算。
-- **4 读上游**：开工前读完九份入口。读证＝路径＋短 SHA＋字节数＋首中尾三行：
+- **4 读上游**：开工前读完九份入口。读证＝路径＋**分支头的提交 SHA**（不是文件的 blob SHA——与 §2 同一口径，
+  别人要能 checkout 到这一刻复核全仓）＋字节数＋首中尾三行：
   `DietrichGebert/ponytail` 的 `skills/ponytail/SKILL.md`、
   `elder-plinius/CL4R1T4S` 的 `ANTHROPIC/CLAUDE-CODE-FABLE-5.2.txt`、
   `nagi-studio/skills`、`morluto/rea`、`storytold/craft-anything`、

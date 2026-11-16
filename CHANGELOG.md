@@ -1,3 +1,48 @@
+## 2026-11-16 · §4「短 SHA」写死为分支头提交 SHA；Selfblox 第 202.1 条跨仓只读核实通过
+
+- **触发**：Selfblox 交的九份上游读证，跟我实测的九条 SHA **一条都不一样**，而**九条字节数一条不差**。
+  我按 §1 先当「可能是造假」去核，结果是**口径不一致**：它报的是**分支头的提交 SHA**，
+  我量的是**文件的 blob SHA**。回头查 Gself（`c6432d1`、`8c1065e`）与 Qself，两家也都是提交 SHA 口径。
+  **三份会话一致，我是那个口径不一致的。**
+- **裁决（§8 自己判断）**：§4 的「短 SHA」**写死为分支头的提交 SHA，不是文件的 blob SHA**。三条理由：
+  ①与 §2「说『现在』就给分支头的完整 SHA」同一口径，不用记两套；
+  ②提交 SHA 能让别人 checkout 到那一刻复核**全仓**，blob SHA 只能核那一个文件；
+  ③Gself／Qself／Selfblox 三家已经都在报提交 SHA，改成 blob 会让三家全部返工——§6 复用优先、少改动，顺从多数。
+- **记一笔我自己的错**：我上一轮在收尾里说「Selfblox 那份汇报是错的」，指的是它**查错分支**那一节（那条成立，
+  `pr-check.yml` 确实只在 `arena/2a114e80-selfblox` 上）。但字节数与 SHA 这一节它没错，错的是我的量法。
+  两条要分开说，不许并成一条（§1 不许把并列的混着说）。
+- **Selfblox 第 202.1 条：核实通过**（跨仓只读，逐项核）。分支 `arena/e2985d6c-selfblox`
+  = `0687a4b2cf576d73f051058fb34babe66ab019bf`，是**双亲合并提交**（7 个文件，msg
+  `feat: 继承并合并主线与 gun 分支工作，对齐 selfs 规范`）；两个旧分支 `89d6a02`、`c63a1bf`
+  对它的 compare 状态均为 `ahead`，即**都已并入**。
+  `.github/workflows` 在该分支上 **404（已删）**；`tools/blindspots.json` 2,504 B、`tools/deadscan.py` 6,212 B
+  均在位；`selfblox.lua` 139,862 B、`README.md` 7,218 B、`CHANGELOG.md` 4,922 B、`LICENSE` 35,149 B
+  ——**四个字节数与它报的完全一致**。
+- **归哪一节**：一·事实 §4。
+- **验收命令**（原样跑过）：
+  ```sh
+  grep -c '分支头的提交 SHA' GLOBAL.md   # 须 1，实测 1
+  grep -c '^- \*\*' GLOBAL.md            # 须 25，实测 25
+  wc -c GLOBAL.md                        # 实测 10740
+  ```
+- **九份上游读证**（分支头提交 SHA 口径，采样 2026-11-16）：
+
+  | 入口 | 提交 SHA | 字节 |
+  |---|---|---|
+  | `DietrichGebert/ponytail` `skills/ponytail/SKILL.md` | `96608e07` | 3,496 |
+  | `elder-plinius/CL4R1T4S` `ANTHROPIC/CLAUDE-CODE-FABLE-5.2.txt` | `93a58476` | 957,315 |
+  | `nagi-studio/skills` `README.md` | `b7bb3ee0` | 5,727 |
+  | `morluto/rea` `README.md` | `d6bcfc10` | 33,036 |
+  | `storytold/craft-anything` `README.md` | `090188d7` | 27,859 |
+  | `Balanov/uncut` `README.md` | `481379be` | 12,339 |
+  | `Dodaios/ste80-humanizer` `SKILL.md` | `0d6f7994` | 14,837 |
+  | `openai/codex-security` `sdk/typescript/docs/cli.md` | `c6432d11` | 162,145 |
+  | `agentes-chat/agentes-chat` `README.md` | `8c1065e7` | 11,111 |
+
+  九条字节数**全部**与 Selfblox 报的吻合，九条 SHA 也吻合。**这个表不证明我读过全文**——
+  只证明我取到了这九个文件、量到了这些字节；首中尾三行本轮只对 `codex-security` 与 `agentes-chat` 当场取过。
+- **同步提示词**：四段按新 §4 发增量（不重发全文，§6 复用优先于新建）。
+
 ## 2026-11-16 · 三份会话回报的四条裁决：§10 判合规；静态母版判接受；§12 加「清单自己要被校验」；四本账定死
 
 - **① §10 判一句（Qself 问）→ 合规，留着，规范不改**。它按硬刻度落地了：三个具名常量
