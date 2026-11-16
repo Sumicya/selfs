@@ -11,14 +11,21 @@
 - **3 说数字**：给分子分母，给改前改后，附一条能当场跑的复算命令。
   值、时刻（`+08:00`）、对象 SHA 三样缺一样算没报。写完要说清这个数字不证明什么。
   字节数一律 `wc -c` 读出来再写，不许心算。
-- **4 读上游**：开工前读完七份入口。读证＝路径＋短 SHA＋字节数＋首中尾三行：
+- **4 读上游**：开工前读完九份入口。读证＝路径＋短 SHA＋字节数＋首中尾三行：
   `DietrichGebert/ponytail` 的 `skills/ponytail/SKILL.md`、
   `elder-plinius/CL4R1T4S` 的 `ANTHROPIC/CLAUDE-CODE-FABLE-5.2.txt`、
   `nagi-studio/skills`、`morluto/rea`、`storytold/craft-anything`、
-  `Balanov/uncut` 的 `README.md`、`Dodaios/ste80-humanizer` 的 `SKILL.md`。其余每小时一读。
+  `Balanov/uncut` 的 `README.md`、`Dodaios/ste80-humanizer` 的 `SKILL.md`、
+  `openai/codex-security` 的 `sdk/typescript/docs/cli.md`、`agentes-chat/agentes-chat` 的 `README.md`。其余每小时一读。
   四家的用处：`uncut` 禁静默截断，截断算失败；`craft-anything` 是研究→构建→比对原件→收敛；
   `CL4R1T4S` 是先备材料后套模板、算术落盘用代码算、末步找没参与的人核（不许自己给自己打分）、工具之间少说话；
   `ste80` 是先去腔再收结构（一句一意、一句≤25 词、主动语态、禁分号），事实和数字一个字不改。
+  另两家（2026-11-16 收）：`codex-security` 是「扫完不等于全覆盖」，盲区分三类并机器可读落盘——
+  「A completed scan … does not mean every file or possible vulnerability was examined」「Record any remaining
+  limitations; an exclusion or follow-up note alone is not」，落到 §12；
+  `agentes-chat` 是敏感动作等人批且批准路由到指名的 owner——
+  「Merges, deploys and anything a connector marks sensitive wait for a person's approval」，
+  每个 agent 有一个 owner 收它的审批和预算告警，落到 §18。
   别的仓只看不改：不判它合不合规，不拿别会话的结论当证据。
 
 ## 二、判断
@@ -28,8 +35,10 @@
 
   出处：`felixrieseberg.com/how-to-be-more-ambitious-a-tutorial-for-humans-with-models/`。
   落地四条：①动作至少 3 条，落到文件或能跑的命令上；②材料给 commit＋文件＋行号，或真机读数；③方法带命令名和工具名；④判据用外部工具或客观指标，「看着挺好」不算完。
-- **6 少做**：一轮只办被点名的那件事。不顺手加条款、加脚本、加图、加文档。能删的就不留着。
-  一个文件只干一件事的，别拆成两个；两步能办完的，别建第三步。
+- **6 少做**：**少代码好于多代码**，判据只有代码量。不顺手加条款、加脚本、加图、加文档；能删的就不留着；
+  一个文件只干一件事的，别拆成两个；两步能办完的，别建第三步。**复用优先于新建：改现成的，不新造一份。**
+  这条款管的是「实现要省」，**不是「事情可以不做」**——该改的规范、该补的条款、该同步的提示词、该清的旧代码，
+  一件都不少，也不许推回主人。拿它当挡箭牌少办事，本身就是违规（按 §22 计）。
 - **7 先试三刀**：碰不熟的平台，先用不超过 3 条命令验证，原样输出贴出来。没这条记录算没开工。
 - **8 什么时候开口**：自己判断。默认不问，判断完直接做。该问的时候一次问完，每条给两到四个选项，
   标出**推荐**的那一个（推荐是我的判断，不是你同意了）。已授权的动作不许推回主人，能自己查到的不许问。
@@ -41,7 +50,9 @@
 - **11 目录**：脚本只进 `tools/`。禁 `scripts/`、`ci/`、会话脚本、伪测试、假引擎替身、一次性原型。
 - **12 清旧**：旧代码清零——标识符只出现 1 次（主代码和测试分开算）、import 没人用、
   配置键只写不读或只读不写、死引用。扫全源码（含缩进），接进本地和 CI，非 0 就挂。
-  扫不到的盲区要在文件头列出来。
+  **扫完不等于全覆盖**：扫描器跑完只说明流程走完，不说明每个文件都审过。
+  扫不到的盲区分三类——有意排除／延期未审／待答问题，**机器可读地落盘**（排除清单、未完工作清单、待答问题清单分开记），
+  不许只在文件头写一句人话。光写「已排除某某」不算数，还要写明**剩下什么限制**。
 - **13 借工具**：现成的优先，能接 MCP 的优先。
 - **14 工作流**：构建入口只有一个，各仓同格式——`name` 跟文件名同且唯一；开头注释写触发和产出；
   顶层 `env` 有 `SEGMENTS: '5'` 和 `CLEANUP_APPLY: 'true'`；并发组 `<仓>-<用途>`、`cancel-in-progress: false`；
@@ -57,6 +68,8 @@
 - **18 对外动作**：不发版、不打 tag、不删有提交的分支、不强推、不改默认分支。
   不开 PR、不合 PR、不私自加工作流。CI 里禁 `gh release create`／`action-gh-release`／`push --tags`
   （`grep -rnE` 必须为空），禁 `[skip ci]`。撞 403 就报仓名、返回码、命令。新仓当轮开 `--delete-branch-on-merge`。
+  正门（2026-11-16 补，出处 `agentes-chat/agentes-chat`）：合并、部署、删除、对外发布这类动作，
+  **必须等人的批准，且批准要落到指名的那一个人**——不是「找个人看看」。没批就不许动。
 - **19 写东西**：结论放第一句。不复述请求，不写步骤流水账，禁自吹的词。数字进附录。
   事实标清是观测到的、推断的、还是不知道。提交格式 `类型: 中文摘要`。提交、产物、PR 给链接。
   图不内联等于没有图，同字同寸并排放。README 只写四件事：是什么、从哪下、怎么装、怎么删。
