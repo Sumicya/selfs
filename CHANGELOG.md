@@ -1,3 +1,17 @@
+## 2026-11-25 · 附录 A 加 shrink-anything；清旧删完必须测试不减
+
+- **事故**：清旧只扫不验，删完测试少了也当过。主人加 `EL4CTEO/shrink-anything`。
+- **改法（归 §11＋附录 A）**：能证明死的才删；每次删完跑项目自己的检查，测试不减才留。入口 `skills/shrink-anything/SKILL.md`（头 `6b00194`）。README 九份改十份。不新开编号。
+- **验收**：
+  ```sh
+  grep -c 'EL4CTEO/shrink-anything' GLOBAL.md   # 须 1
+  grep -c '测试不减才留' GLOBAL.md             # 须 2
+  grep -c '九份' README.md                     # 须 0
+  grep -c '十份' README.md                     # 须 2
+  wc -c GLOBAL.md                              # 改前 9002，改后 9300
+  ```
+- **删了会怎样**：又把证不了的当死代码删，改测试来让检查过。
+
 ## 2026-11-25 · 规范整份重写：23 条并 19 条（试→想、借→少、一条龙→写、收尾→自检）；README 七处死引用同步
 
 - **点头来源**：主人「看看规范仓并重写」。§9：整份重写，不是点哪改哪。
